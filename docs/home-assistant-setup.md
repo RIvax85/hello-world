@@ -19,14 +19,18 @@ Au choix :
 
 Une adresse locale (`http://192.168.x.x:8123`) ne fonctionnera **pas**.
 
-## Étape 2 — Activer l'intégration MCP Server dans Home Assistant
+## Étape 2 — Rien à installer dans Home Assistant
 
-1. Paramètres → Appareils et services → Ajouter une intégration.
-2. Chercher **"Model Context Protocol Server"** et l'installer.
-3. Choisir ce que l'assistant peut contrôler via les paramètres
-   d'exposition d'Assist (Paramètres → Assistants vocaux → Exposer).
+Le serveur MCP utilisé est `ha-mcp` (le même que dans la configuration
+Claude Desktop) : il est lancé **dans la session cloud** via
+`uvx ha-mcp@latest` (voir `.mcp.json`) et dialogue avec Home Assistant par
+son API, avec le token. Aucune intégration ni add-on n'est donc requis
+côté Home Assistant.
 
-L'endpoint MCP est alors disponible sur `https://votre-url/mcp_server/sse`.
+Alternative : l'intégration officielle "Model Context Protocol Server"
+de Home Assistant (endpoint `https://votre-url/mcp_server/sse`) reste
+utilisable si on préfère un serveur hébergé par Home Assistant, mais elle
+ne couvre que le contrôle des appareils exposés à Assist.
 
 ## Étape 3 — Créer un token d'accès longue durée
 
@@ -44,9 +48,12 @@ Sur [claude.ai/code](https://claude.ai/code) (ou dans l'app) :
 2. Ajouter deux **variables d'environnement** :
    - `HA_URL` = `https://votre-url-home-assistant` (sans `/` final)
    - `HA_TOKEN` = le token créé à l'étape 3
-3. Vérifier que la **politique réseau** de l'environnement autorise le
-   trafic sortant vers votre domaine Home Assistant (ajouter le domaine
-   à la liste blanche si la politique est restrictive).
+3. Régler la **politique réseau** (Network access) sur **Custom** :
+   - ajouter votre domaine Home Assistant dans « Allowed domains »
+     (par ex. `xxxxxxxx.ui.nabu.casa`) ;
+   - **cocher « Also include default list of common package managers »** :
+     indispensable pour que `uvx` puisse télécharger `ha-mcp` depuis PyPI
+     au démarrage de la session.
 
 Le fichier `.mcp.json` du dépôt référence ces variables : aucun secret
 n'est stocké dans le dépôt.
@@ -65,7 +72,7 @@ exemple :
 | Symptôme | Cause probable |
 |---|---|
 | Le serveur MCP n'apparaît pas | `HA_URL`/`HA_TOKEN` absents des réglages de l'environnement, ou session lancée avant leur ajout |
+| `uvx` ne télécharge pas `ha-mcp` | Case « Also include default list of common package managers » non cochée dans la politique réseau Custom |
 | Erreur 401 | Token invalide ou expiré → en générer un nouveau |
-| Timeout / connexion refusée | Instance non accessible publiquement, ou domaine bloqué par la politique réseau de l'environnement |
-| 404 sur `/mcp_server/sse` | Intégration MCP Server non installée dans Home Assistant |
+| Timeout / connexion refusée | Instance non accessible publiquement, ou domaine Nabu Casa absent des « Allowed domains » |
 | 401/403 sur `/api/config/automation/...` | Le token n'appartient pas à un compte administrateur |

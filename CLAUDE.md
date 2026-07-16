@@ -3,11 +3,14 @@
 Ce dépôt sert à piloter Home Assistant depuis des sessions Claude Code
 (notamment lancées depuis le smartphone). Deux canaux sont disponibles :
 
-## 1. Serveur MCP officiel (contrôle des appareils)
+## 1. Serveur MCP `ha-mcp` (contrôle des appareils)
 
-Configuré dans `.mcp.json`. Il expose l'API Assist de Home Assistant :
-allumer/éteindre, lire les états, lancer des scènes. Il ne permet PAS
-d'éditer les automatisations ni la configuration.
+Configuré dans `.mcp.json` : la session lance `uvx ha-mcp@latest` (le même
+serveur que la configuration Claude Desktop de l'utilisateur), qui se
+connecte à Home Assistant via les variables `HA_URL` et `HA_TOKEN`.
+Utiliser ses outils en priorité pour lire les états et contrôler les
+appareils. Si ha-mcp expose aussi des outils de gestion des automatisations,
+ils peuvent être utilisés, mais l'API REST ci-dessous reste la référence.
 
 ## 2. API REST (configuration et automatisations)
 
