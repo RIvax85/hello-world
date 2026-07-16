@@ -1,0 +1,27 @@
+{
+    "id": "1782858153914",
+    "alias": "Store V\u00e9rand\u00e0 \u2014 Remont\u00e9e 17h",
+    "description": "Remonte le store v\u00e9rand\u00e0 \u00e0 17h, le soleil ne l'atteint plus c\u00f4t\u00e9 nord-est",
+    "triggers": [
+        {
+            "trigger": "time",
+            "at": "17:00:00"
+        }
+    ],
+    "conditions": [
+        {
+            "condition": "state",
+            "entity_id": "cover.store_veranda",
+            "state": "open"
+        }
+    ],
+    "actions": [
+        {
+            "action": "cover.close_cover",
+            "target": {
+                "entity_id": "cover.store_veranda"
+            }
+        }
+    ],
+    "mode": "single"
+}

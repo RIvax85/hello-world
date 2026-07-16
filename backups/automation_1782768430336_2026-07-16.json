@@ -1,0 +1,53 @@
+{
+    "id": "1782768430336",
+    "alias": "Store V\u00e9rand\u00e0 \u2014 Remont\u00e9e si pluie",
+    "description": "Remonte le store v\u00e9rand\u00e0 automatiquement en cas de pluie d\u00e9tect\u00e9e ou imminente",
+    "triggers": [
+        {
+            "trigger": "state",
+            "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+            "to": [
+                "rainy",
+                "pouring",
+                "lightning-rainy"
+            ],
+            "id": "pluie_meteo"
+        },
+        {
+            "trigger": "state",
+            "entity_id": "sensor.meteo_france_rain_for_city_antony_ile_de_france_92_fr_antony_next_rain",
+            "from": "unknown",
+            "id": "pluie_imminente"
+        }
+    ],
+    "conditions": [
+        {
+            "condition": "state",
+            "entity_id": "cover.store_veranda",
+            "state": "open"
+        }
+    ],
+    "actions": [
+        {
+            "action": "cover.close_cover",
+            "target": {
+                "entity_id": "cover.store_veranda"
+            }
+        },
+        {
+            "action": "notify.mobile_app_pixel_8",
+            "data": {
+                "message": "\ud83c\udf27\ufe0f Pluie d\u00e9tect\u00e9e \u2014 Store v\u00e9rand\u00e0 rentr\u00e9 automatiquement.",
+                "title": "Store V\u00e9rand\u00e0"
+            }
+        },
+        {
+            "action": "notify.mobile_app_nixel_8",
+            "data": {
+                "message": "\ud83c\udf27\ufe0f Pluie d\u00e9tect\u00e9e \u2014 Store v\u00e9rand\u00e0 rentr\u00e9 automatiquement.",
+                "title": "Store V\u00e9rand\u00e0"
+            }
+        }
+    ],
+    "mode": "single"
+}
