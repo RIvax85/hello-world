@@ -1,0 +1,82 @@
+{
+    "id": "1782683929809",
+    "alias": "Volets Sud \u2014 Fermeture anti-chaleur",
+    "description": "Ferme les volets c\u00f4t\u00e9 sud \u00e0 11h si temp ext\u00e9rieure > 26\u00b0C, et d\u00e9ploie les stores banne et v\u00e9randa (sauf pluie)",
+    "triggers": [
+        {
+            "at": "11:00:00",
+            "trigger": "time"
+        }
+    ],
+    "conditions": [
+        {
+            "above": 26,
+            "attribute": "temperature",
+            "condition": "numeric_state",
+            "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony"
+        }
+    ],
+    "actions": [
+        {
+            "action": "cover.close_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_2_shutter",
+                    "cover.rts_14_shutter"
+                ]
+            }
+        },
+        {
+            "if": [
+                {
+                    "condition": "not",
+                    "conditions": [
+                        {
+                            "condition": "state",
+                            "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+                            "state": [
+                                "rainy",
+                                "pouring",
+                                "lightning-rainy",
+                                "lightning",
+                                "hail"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "then": [
+                {
+                    "action": "cover.open_cover",
+                    "target": {
+                        "entity_id": [
+                            "cover.store_banne_2",
+                            "cover.store_veranda"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "action": "notify.mobile_app_pixel_8",
+            "data": {
+                "message": "Temp ext\u00e9rieure {{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'temperature') }}\u00b0C \u2014 Terrasse, June et V\u00e9randa ferm\u00e9s, stores banne et v\u00e9randa d\u00e9ploy\u00e9s.",
+                "title": "\u2600\ufe0f Volets sud ferm\u00e9s"
+            }
+        },
+        {
+            "action": "input_boolean.turn_on",
+            "target": {
+                "entity_id": "input_boolean.volets_sud_fermes_auto"
+            }
+        },
+        {
+            "action": "notify.mobile_app_nixel_8",
+            "data": {
+                "message": "Temp ext\u00e9rieure {{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'temperature') }}\u00b0C \u2014 Terrasse et June ferm\u00e9s, stores banne et v\u00e9randa d\u00e9ploy\u00e9s.",
+                "title": "\u2600\ufe0f Volets sud ferm\u00e9s"
+            }
+        }
+    ],
+    "mode": "single"
+}
