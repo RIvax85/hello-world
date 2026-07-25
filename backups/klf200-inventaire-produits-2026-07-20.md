@@ -26,8 +26,9 @@ automatisations continuent de fonctionner.
 | RDC_Store_Veranda | Horizontal awning | RDC |
 | Store_Banne | Horizontal awning | Terrasse |
 
-Note : le premier nom est tronqué à l'écran (`Dependance_Fenetre_Sal…`) ;
-vérifier l'orthographe exacte dans l'interface avant le reset si possible.
+Noms confirmés à l'identique par l'utilisateur le 2026-07-25, juste avant le
+reset usine. Firmware déjà en 0.2.0.0.71.0 (dernière version) : pas de mise à
+jour à refaire après le reset.
 
 ## Produits à ajouter (objectif de l'opération)
 
