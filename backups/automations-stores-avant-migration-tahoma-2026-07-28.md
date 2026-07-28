@@ -46,12 +46,34 @@ reproduites ci-dessous (champs essentiels) pour retour arrière.
 - automation.volets_r_1_fermeture_5h : appelle ce script → OK
 - Aucune automatisation ne référence les volets Velux du KLF (combles/dépendance)
 
-## À faire après appairage TaHoma + intégration Overkiz
-1. Identifier les nouvelles entités cover des deux stores (+ 4 lumières io).
-2. Remplacer cover.store_banne_2 et cover.store_veranda dans les 5
-   automatisations ci-dessus.
-3. Proposé : condition `input_boolean.mode_vacances = off` sur la branche
-   « déploiement des stores » de l'anti-chaleur (ne pas sortir les stores
-   sans surveillance pendant les congés).
-4. Supprimer/désactiver l'ancienne intégration Velux et ses entités orphelines.
-5. Volets de toit R+1 : à ajouter aux automatisations plus tard si souhaité.
+## Migration effectuée le 2026-07-28 (soir)
+
+Après remise à zéro des moteurs io (double coupure 2-8-2 + PROG 7 s, qui
+efface l'ancienne clé io du KLF), appairage TaHoma Switch et intégration
+Overkiz (cloud), les 5 automatisations ont été basculées :
+
+- `cover.store_banne_2` → `cover.jardin_store_banne`
+- `cover.store_veranda` → `cover.salle_a_manger_store_veranda`
+- Anti-chaleur : ajout de la condition `input_boolean.mode_vacances = off`
+  sur la branche « déploiement des stores » (pas de déploiement sans
+  surveillance pendant les congés).
+- Sémantique vérifiée sur les entités Overkiz : close = rentrer (testé
+  physiquement le 2026-07-28).
+- Lumières : seule `light.jardin_lumiere_banne_1` est opérationnelle ; les
+  3 autres récepteurs sont à récupérer via leur bouton PROG physique
+  (voir « Reste à faire »).
+
+## Reste à faire (rentrée)
+1. Volets VELUX (combles ×3, toit R+1 ×2, dépendance ×4 + 2 fenêtres) :
+   toujours porteurs de l'ancienne clé KLF → reset moteur par produit
+   (bouton P/RESET du moteur, accès physique) puis appairage TaHoma.
+   Appeler le support Somfy (0 820 055 055) et VELUX avant : manipulations
+   assistées possibles pour clé perdue.
+2. Récupérer les 3 récepteurs de lumière muets (PROG du récepteur ~2 s puis
+   PROG bref Situo canal 2, puis découverte TaHoma io 1-way).
+3. Supprimer l'ancienne intégration Velux dans HA + entités orphelines
+   (cover.combles_*, cover.dependance_*, cover.store_banne,
+   cover.rdc_store_veranda, light.store_banne_*…) et les entités périmées
+   cover.store_banne_2 / cover.store_veranda si leur source est retirée.
+4. Optionnel : passer Overkiz en API locale (mode développeur Somfy + token).
+5. Optionnel : capteur vent Eolis du banne — vérifier son appairage.
