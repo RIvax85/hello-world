@@ -46,6 +46,23 @@ Synthèse de référence pour toute session future. Détails opérationnels dans
    bref sur le canal à retirer) ; un récepteur lumière effacé s'allume en
    permanence.
 
+## Ajouts du 2026-07-29 (jour du départ)
+
+- `automation.eclairage_exterieur_commutateur_sous_escalier` : alimente les
+  lampes extérieures (détecteurs intégrés) du coucher du soleil à 1h.
+- `automation.alarme_echec_d_armement_annonce_des_ouvrants` : sur événement
+  `alarmo_failed_to_arm`, notifie les téléphones + annonce vocale (enceinte
+  séjour) du ou des ouvrants qui bloquent. Testé OK (fenêtre bureau).
+- `automation.alarme_sirene_continue_pendant_le_declenchement` : la sirène
+  Zigbee s'arrêtait après 10 s (durée par défaut des commandes warning
+  Zigbee2MQTT, `siren.sirene` est en assumed_state). Relance toutes les 8 s
+  tant qu'Alarmo est « triggered », plafond ~3 min. Testé OK (>30 s,
+  coupure immédiate au désarmement).
+- Test négatif : les détecteurs de fumée ne réagissent pas à une commande
+  MQTT `warning` → pas de sonnerie multi-étages via les détecteurs.
+- ⚠️ « Détecteur de fumée Palier » : tous états `unknown` dans HA —
+  probablement hors réseau Zigbee ou pile morte. Bouton test à vérifier.
+
 ## Reste à faire (rentrée septembre 2026)
 
 1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
@@ -62,3 +79,12 @@ Synthèse de référence pour toute session future. Détails opérationnels dans
 4. Optionnel : API locale Overkiz (mode développeur Somfy + jeton) ;
    vérifier l'appairage du capteur vent Eolis du banne ; ajouter les volets
    de toit aux automatisations une fois appairés.
+5. Ressusciter « Détecteur de fumée Palier » (pile / ré-appairage Zigbee) —
+   point de sécurité incendie.
+6. Mise à jour firmware du Shelly portail (reportée volontairement avant
+   le départ).
+7. Sirène : régler proprement la durée par défaut du warning côté
+   Zigbee2MQTT (l'automatisation-relance devient alors une redondance).
+8. Script central `notifier` : fan-out vers les 2 téléphones + trace
+   `logbook.log` pour un historique des notifications consultable dans HA,
+   puis migration progressive des automatisations.
