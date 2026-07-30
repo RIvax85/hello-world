@@ -83,10 +83,22 @@ Corrections appliquées :
   `mode_vacances = off` ajoutée (ne pouvait pas se déclencher en mode
   Absence, mais cohérence de principe).
 - Nouveau `automation.vacances_filet_de_securite_rearmement_alarme` :
-  pendant le mode vacances, réarme en Absence si l'alarme reste désarmée
-  plus de 15 min avec la maison vide ; exception sur le créneau ménage du
-  11/08 (9h-14h). C'est le garde-fou générique contre tout désarmement
-  imprévu pendant une absence.
+  garde-fou générique contre tout désarmement imprévu pendant une absence.
+  Version finale (tenant compte des visiteurs attendus — belle-mère,
+  femme de ménage — qui désarment manuellement au bouton porte ou au
+  clavier RFID et ne sont PAS suivis par `zone.home`) :
+  déclencheur `time_pattern` toutes les 15 min ; réarme seulement si
+  mode vacances actif, alarme désarmée depuis > 20 min, `zone.home < 1`,
+  ET aucune activité intérieure depuis 30 min (mouvement salon / entrée /
+  couloir / véranda / WC, ou ouverture porte principale / salon / véranda /
+  garage). Un visiteur présent bloque donc le réarmement ; il repart, la
+  maison redevient calme, l'alarme se réarme seule ~30 min plus tard.
+  Exception sur le créneau ménage du 11/08 (9h-14h).
+  ⚠️ Le capteur mouvement Terrasse est volontairement exclu (extérieur,
+  risque de blocage permanent).
+- Nouveau `automation.vacances_alerte_desarmement_manuel` : notifie les
+  deux téléphones (avec photo caméra Entrée) dès qu'un désarmement a lieu
+  pendant le mode vacances.
 - `automation.portillon_sonnette` : la notification embarque désormais une
   photo de la caméra portillon (`/api/camera_proxy/camera.portillon_main`),
   priorité haute.
