@@ -63,6 +63,34 @@ Synthèse de référence pour toute session future. Détails opérationnels dans
 - ⚠️ « Détecteur de fumée Palier » : tous états `unknown` dans HA —
   probablement hors réseau Zigbee ou pile morte. Bouton test à vérifier.
 
+## Ajustements vacances du 2026-07-30
+
+Incident : l'automatisation « Nounou — Désarmement alarme » a désarmé
+l'alarme le jeudi 30/07 à 17h45, maison vide et famille en vacances.
+L'armement automatique au départ n'a pas repris la main (son déclencheur
+est le *front* de départ, déjà passé). Alarme restée désarmée ~1 h.
+
+Corrections appliquées :
+
+- `automation.nounou_desarmement_alarme` : condition permanente
+  `input_boolean.mode_vacances = off`. Le désarmement nounou est
+  désormais automatiquement neutralisé à chaque période de vacances.
+- `automation.femme_de_menage_desarmement_alarme` et
+  `..._rearmement_alarme` : condition
+  `mode_vacances = off OU date = 2026-08-11` — le passage du 11 août
+  (un mardi) est maintenu, tous les autres mardis de l'été sont neutralisés.
+- `automation.alarme_desarmement_automatique_5h30` : garde
+  `mode_vacances = off` ajoutée (ne pouvait pas se déclencher en mode
+  Absence, mais cohérence de principe).
+- Nouveau `automation.vacances_filet_de_securite_rearmement_alarme` :
+  pendant le mode vacances, réarme en Absence si l'alarme reste désarmée
+  plus de 15 min avec la maison vide ; exception sur le créneau ménage du
+  11/08 (9h-14h). C'est le garde-fou générique contre tout désarmement
+  imprévu pendant une absence.
+- `automation.portillon_sonnette` : la notification embarque désormais une
+  photo de la caméra portillon (`/api/camera_proxy/camera.portillon_main`),
+  priorité haute.
+
 ## Reste à faire (rentrée septembre 2026)
 
 1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
