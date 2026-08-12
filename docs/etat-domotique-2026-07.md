@@ -143,6 +143,19 @@ Autres observations du 12/08 :
   porte associée (dernière ouverture il y a 19 h) : probable faux positif
   (soleil/chaleur dans la véranda).
 
+Actions prises le 12/08 à 12h51 :
+- Alarme repassée en **mode Absence** (`armed_away`).
+- Le service `alarmo.disable_sensor` n'existe pas dans cette version
+  d'Alarmo : impossible d'exclure un capteur par API. Exclusion à faire
+  manuellement le cas échéant via le panneau Alarmo → Capteurs →
+  « Capteur Mouvement Veranda Occupation » → décocher le mode Absence.
+- En attendant, `automation.alarme_filtre_faux_positif_veranda` : si un
+  déclenchement survient alors que seul le capteur véranda a bougé et
+  qu'aucun ouvrant n'a changé d'état depuis 10 min, l'alarme est désarmée
+  puis immédiatement réarmée en Absence, avec notification photo. Une
+  intrusion réelle passant nécessairement par un ouvrant, la sirène reste
+  normale dans ce cas.
+
 ## Reste à faire (rentrée septembre 2026)
 
 1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
