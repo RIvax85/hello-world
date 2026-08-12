@@ -103,6 +103,46 @@ Corrections appliquées :
   photo de la caméra portillon (`/api/camera_proxy/camera.portillon_main`),
   priorité haute.
 
+## Constat du 2026-08-12 — simulation de présence incomplète
+
+Vérification en cours de vacances : l'intégration Presence Simulation
+(`switch.simulation_vacances`, active depuis le 29/07) ne pilote en réalité
+que **Volet Salon** (`cover.rts_4_shutter`) et **Volet Entrée**
+(`cover.rts_6_shutter`). Les cinq autres volets étaient figés fermés :
+
+| Volet | Fermé depuis (au 12/08 12h15) |
+|---|---|
+| SdB (`rts_8`) | 397 h (~16 j) |
+| June (`rts_14`) | 175 h (~7 j) |
+| Terrasse (`rts_2`) | 109 h (~4,5 j) |
+| Malo (`rts_10`) | 79 h (~3,3 j) |
+| Robin (`rts_12`) | 79 h (~3,3 j) |
+
+Cause : `automation.volets_r_1_fermeture_5h` ferme SdB/Malo/Robin/June
+chaque matin à 5h (elle tourne toujours, dernier passage le 12/08 à 5h) et,
+en mode vacances, plus rien ne les rouvre — la réouverture au coucher du
+soleil ne concerne que Terrasse + June et dépend du flag
+`volets_sud_fermes_auto`, resté `off` (l'anti-chaleur n'a plus tourné
+depuis le 04/08). Résultat : maison visiblement fermée côté rue, soit
+l'inverse de l'effet recherché.
+
+Correctif : `automation.vacances_volets_simulation_de_presence` — pendant
+le mode vacances, ouvre Terrasse/SdB/Malo/Robin/June le matin (08h15),
+les referme à la mi-journée si T° > 28 °C, les rouvre en soirée (19h) et
+les ferme pour la nuit (22h), avec un décalage aléatoire de 0 à 45 min à
+chaque étape. Salon et Entrée restent gérés par l'intégration.
+
+Autres observations du 12/08 :
+- L'alarme est en **mode Nuit** depuis 19 h (probablement un appui simple
+  sur le bouton porte par un visiteur, qui arme en Nuit et non en Absence).
+  En mode Nuit les capteurs de mouvement intérieurs ne sont pas armés.
+- `last_triggered` de l'alarme = 11/08 08h31 : déclenchement le jour du
+  ménage, la femme de ménage étant arrivée avant le désarmement de 9h.
+  → à la rentrée, avancer le désarmement du mardi à 8h15.
+- Mouvement isolé « Véranda » le 12/08 à 12h09, sans aucune ouverture de
+  porte associée (dernière ouverture il y a 19 h) : probable faux positif
+  (soleil/chaleur dans la véranda).
+
 ## Reste à faire (rentrée septembre 2026)
 
 1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
