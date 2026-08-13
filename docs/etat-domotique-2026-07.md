@@ -156,6 +156,32 @@ Actions prises le 12/08 à 12h51 :
   intrusion réelle passant nécessairement par un ouvrant, la sirène reste
   normale dans ce cas.
 
+## Notifications — remplacement du Pixel 8 (2026-08-13)
+
+Le Pixel 8 de Nathan est hors service. Le téléphone pro **Samsung-A34** a
+été ajouté à l'app compagnon (`notify.mobile_app_samsung_a34`,
+`device_tracker.samsung_a34`, testé OK).
+
+Solution retenue : `automation.notifications_relais_pixel_8_vers_samsung_a34`
+écoute les événements `call_service` du domaine `notify`, filtre ceux
+destinés à `mobile_app_pixel_8` et les retransmet à l'identique (titre,
+message, et bloc `data` avec image/priorité) au Samsung-A34.
+
+Pourquoi un relais plutôt qu'un remplacement du service dans chaque
+automatisation : 21 automatisations appellent `notify.mobile_app_pixel_8`,
+il faudrait toutes les réécrire puis les réécrire à nouveau au retour du
+Pixel. Le relais se désactive d'un clic. Effet de bord bienvenu :
+`automation.archive_notifications` (qui journalise les notifications
+Pixel dans le logbook) continue de fonctionner sans modification.
+
+⚠️ À la réparation du Pixel : désactiver ou supprimer ce relais, sinon
+Nathan recevra chaque notification en double.
+
+⚠️ Observation : `sensor.nixel_8_battery_level` (téléphone de Pauline) ne
+remonte plus rien depuis 13 jours (~30/07). Les notifications push
+peuvent malgré tout arriver, mais à vérifier — sinon Pauline ne reçoit
+plus rien non plus.
+
 ## Reste à faire (rentrée septembre 2026)
 
 1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
