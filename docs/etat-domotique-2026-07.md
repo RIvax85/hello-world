@@ -182,6 +182,41 @@ remonte plus rien depuis 13 jours (~30/07). Les notifications push
 peuvent malgré tout arriver, mais à vérifier — sinon Pauline ne reçoit
 plus rien non plus.
 
+## Corrections du 2026-08-13 (retours de Pauline)
+
+### Stores déployés pendant les vacances — cause racine
+
+Le journal montre des appels `set_cover_position` sur les deux stores par
+l'utilisateur `aa46a3c352f3473f8b9c10bf56e54ec0` (le 12/08 à 12h09 et le
+13/08 à 11h26) : **l'intégration Presence Simulation rejoue l'historique
+des deux stores et les déploie**. Le 12/08 à 16h36 l'automatisation pluie
+les a bien rentrés (état `closed` à 16h37, notification reçue), mais la
+simulation les a redéployés le lendemain — d'où l'impression qu'ils
+« n'avaient pas été bien descendus ».
+
+Facteur aggravant : les stores passent régulièrement en `unavailable`
+(coupures cloud TaHoma — 12/08 14h19→14h34, 13/08 08h51→08h57). Une
+commande envoyée pendant ces fenêtres peut ne pas aboutir.
+
+Correctifs :
+- Stores rentrés manuellement le 13/08 à 11h39 (banne était à 43 %,
+  véranda à 100 %) — vérifiés `closed` / position 0.
+- Nouveau `automation.vacances_stores_toujours_rentres` : en mode
+  vacances, tout store restant déployé plus de 90 s est rentré, avec
+  jusqu'à 3 tentatives et attente de confirmation d'état (absorbe les
+  passages en `unavailable`). Notification si les 3 tentatives échouent.
+- À la rentrée : retirer les deux stores de la configuration de
+  l'intégration Presence Simulation (ils n'ont rien à y faire — un store
+  déployé sans surveillance est un risque, pas un signe de présence).
+
+### Température extérieure du dashboard
+
+La tuile affichait `sensor.salon_melcloudhome_527f_47e6_outdoor_temperature`,
+c'est-à-dire la sonde de l'unité extérieure de la clim (23,5 °C relevés
+contre 30,4 °C chez Météo France). Remplacée par l'attribut `temperature`
+de l'entité `weather.meteo_france_...antony`. La sonde clim est conservée
+en dessous, renommée « Sonde ext. clim (indicative) ».
+
 ## Reste à faire (rentrée septembre 2026)
 
 1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
