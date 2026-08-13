@@ -205,9 +205,14 @@ Correctifs :
   vacances, tout store restant déployé plus de 90 s est rentré, avec
   jusqu'à 3 tentatives et attente de confirmation d'état (absorbe les
   passages en `unavailable`). Notification si les 3 tentatives échouent.
-- À la rentrée : retirer les deux stores de la configuration de
-  l'intégration Presence Simulation (ils n'ont rien à y faire — un store
-  déployé sans surveillance est un risque, pas un signe de présence).
+- Retrait des stores de la Presence Simulation : **impossible via l'API**.
+  L'intégration se configure par config entry (UI uniquement) et pilote
+  aussi les volets RTS (`next_entity_id` observé : `cover.rts_10_shutter`),
+  donc la relancer avec une liste partielle via `presence_simulation.start`
+  risquerait d'en perdre. À faire dans l'UI : Paramètres → Appareils et
+  services → Presence Simulation → Configurer → décocher
+  `cover.jardin_store_banne` et `cover.salle_a_manger_store_veranda`.
+  En attendant, le garde-fou ci-dessous produit le même effet.
 
 ### Température extérieure du dashboard
 
@@ -216,6 +221,32 @@ c'est-à-dire la sonde de l'unité extérieure de la clim (23,5 °C relevés
 contre 30,4 °C chez Météo France). Remplacée par l'attribut `temperature`
 de l'entité `weather.meteo_france_...antony`. La sonde clim est conservée
 en dessous, renommée « Sonde ext. clim (indicative) ».
+
+### Stores : règles définitives (13/08, demande de Nathan)
+
+Comportement voulu : pas de déploiement par la simulation de présence,
+mais déploiement conservé en cas de forte chaleur — **véranda 100 %,
+banne 40 % maximum** — et rentrée maintenue en cas de vent ou de pluie.
+
+Mise en œuvre :
+- Nouveau `input_boolean.stores_deployes_pour_chaleur` : distingue un
+  déploiement légitime (chaleur) d'un déploiement parasite (simulation).
+- `automation.volets_sud_fermeture_anti_chaleur` : la condition
+  `mode_vacances = off` a été **retirée** (le déploiement chaleur est
+  désormais autorisé aussi en vacances) ; `cover.open_cover` remplacé par
+  `cover.set_cover_position` — véranda 100, banne 40 ; le drapeau est levé
+  avant les commandes. Les garde-fous pluie/vent restent en condition.
+- `automation.vacances_stores_toujours_rentres` : ne rentre les stores que
+  si le drapeau chaleur est éteint.
+- Nouveau `automation.stores_fin_du_deploiement_chaleur` : éteint le
+  drapeau dès que les deux stores sont rentrés (pluie, vent, 17h ou
+  coucher du soleil), ce qui réarme le garde-fou.
+- Inchangé : `store_veranda_remontee_si_pluie`,
+  `stores_veranda_banne_remontee_si_vent_fort`, `store_veranda_remontee_17h`
+  et la rentrée au coucher du soleil.
+
+Vérifié en réel le 13/08 à 11h47 (30,4 °C, vent 3,6 km/h) : déclenchement
+manuel de l'anti-chaleur → drapeau levé, les deux stores se déploient.
 
 ## Reste à faire (rentrée septembre 2026)
 
