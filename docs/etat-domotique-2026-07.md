@@ -186,13 +186,24 @@ plus rien non plus.
 
 ### Stores déployés pendant les vacances — cause racine
 
-Le journal montre des appels `set_cover_position` sur les deux stores par
-l'utilisateur `aa46a3c352f3473f8b9c10bf56e54ec0` (le 12/08 à 12h09 et le
-13/08 à 11h26) : **l'intégration Presence Simulation rejoue l'historique
-des deux stores et les déploie**. Le 12/08 à 16h36 l'automatisation pluie
-les a bien rentrés (état `closed` à 16h37, notification reçue), mais la
-simulation les a redéployés le lendemain — d'où l'impression qu'ils
-« n'avaient pas été bien descendus ».
+⚠️ **Diagnostic initial ERRONÉ, corrigé le 13/08.** J'avais attribué les
+appels `set_cover_position` sur les deux stores (12/08 à 12h09, 13/08 à
+11h26) à l'intégration Presence Simulation. Vérification faite,
+`aa46a3c352f3473f8b9c10bf56e54ec0` est le **compte de Pauline**
+(`person.pauline`) : c'est elle qui déployait les stores depuis l'app,
+et qui refermait dans la foulée les volets Salon et Malo — une routine
+anti-canicule manuelle. Les stores n'ont jamais été dans la simulation
+(confirmé par Nathan).
+
+Correspondance des `context_user_id` observés :
+- `23bae9a71ce047ad9966e861cbdc20d2` → Nathan (compte utilisé par ha-mcp)
+- `aa46a3c352f3473f8b9c10bf56e54ec0` → Pauline
+- `52d64c7c190944bf8f2cbdf4d3a1ba5f` → intégration Presence Simulation
+  (pilote les volets RTS : rts_4, rts_6…)
+
+Le 12/08 à 16h36 l'automatisation pluie a bien rentré les stores (état
+`closed` à 16h37, notification reçue) ; Pauline les a redéployés le
+lendemain matin.
 
 Facteur aggravant : les stores passent régulièrement en `unavailable`
 (coupures cloud TaHoma — 12/08 14h19→14h34, 13/08 08h51→08h57). Une
@@ -205,14 +216,10 @@ Correctifs :
   vacances, tout store restant déployé plus de 90 s est rentré, avec
   jusqu'à 3 tentatives et attente de confirmation d'état (absorbe les
   passages en `unavailable`). Notification si les 3 tentatives échouent.
-- Retrait des stores de la Presence Simulation : **impossible via l'API**.
-  L'intégration se configure par config entry (UI uniquement) et pilote
-  aussi les volets RTS (`next_entity_id` observé : `cover.rts_10_shutter`),
-  donc la relancer avec une liste partielle via `presence_simulation.start`
-  risquerait d'en perdre. À faire dans l'UI : Paramètres → Appareils et
-  services → Presence Simulation → Configurer → décocher
-  `cover.jardin_store_banne` et `cover.salle_a_manger_store_veranda`.
-  En attendant, le garde-fou ci-dessous produit le même effet.
+- Retrait des stores de la Presence Simulation : **sans objet**, Nathan a
+  vérifié le 13/08 qu'ils n'y figuraient pas. (Le retrait via l'API aurait
+  de toute façon été impossible : l'intégration se configure par config
+  entry, UI uniquement.)
 
 ### Température extérieure du dashboard
 
@@ -237,7 +244,11 @@ Mise en œuvre :
   `cover.set_cover_position` — véranda 100, banne 40 ; le drapeau est levé
   avant les commandes. Les garde-fous pluie/vent restent en condition.
 - `automation.vacances_stores_toujours_rentres` : ne rentre les stores que
-  si le drapeau chaleur est éteint.
+  si le drapeau chaleur est éteint **et** si le déploiement ne vient pas
+  d'un humain (`trigger.to_state.context.user_id is none`) — ajouté le
+  13/08 après avoir découvert que Pauline pilotait les stores à la main :
+  le filet ne doit jamais contrarier une décision humaine. Il ne subsiste
+  que pour un déploiement d'origine automatique inattendue.
 - Nouveau `automation.stores_fin_du_deploiement_chaleur` : éteint le
   drapeau dès que les deux stores sont rentrés (pluie, vent, 17h ou
   coucher du soleil), ce qui réarme le garde-fou.
@@ -247,6 +258,24 @@ Mise en œuvre :
 
 Vérifié en réel le 13/08 à 11h47 (30,4 °C, vent 3,6 km/h) : déclenchement
 manuel de l'anti-chaleur → drapeau levé, les deux stores se déploient.
+
+### Dashboard — section Température (13/08)
+
+Nathan a retiré la tuile « Sonde ext. clim ». Harmonisation du rendu :
+la température extérieure était une carte `entity` (rendu différent des
+tuiles voisines) car Météo-France n'expose **pas** de capteur de
+température — seulement UV, précipitations, humidité, couverture
+nuageuse, risques. La température n'existe qu'en attribut de l'entité
+`weather`. Passée en carte `tile` avec `state_content: temperature`
+(possible en HA 2026.7.4), donc rendu identique aux autres.
+
+Section Température finale : thermostat Clim Salon (carte de contrôle,
+volontairement différente), puis quatre tuiles au même format —
+Température Salon, Température Extérieure, Vigilance Météo-France,
+Température Combles.
+
+Vigilance Météo-France au 13/08 : **Orange = Canicule** (vent violent et
+orages au vert), d'où le maintien des stores déployés.
 
 ## Reste à faire (rentrée septembre 2026)
 
