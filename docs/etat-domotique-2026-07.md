@@ -302,3 +302,36 @@ orages au vert), d'où le maintien des stores déployés.
 8. Script central `notifier` : fan-out vers les 2 téléphones + trace
    `logbook.log` pour un historique des notifications consultable dans HA,
    puis migration progressive des automatisations.
+
+## 2026-08-23 — Alarme qui s'arme alors que la maison est occupée
+
+Symptôme : `automation.alarme_armement_automatique_au_depart` s'est
+déclenchée à 12h50 alors que Nathan était à la maison.
+
+Cause : `person.nathan_dondey` suit **deux** trackers —
+`device_tracker.nixel_8` (son Pixel, revenu de réparation, état `home`,
+batterie 94 %, remontée il y a 2 min) et `device_tracker.samsung_a34`
+(téléphone pro, état `not_home`). Home Assistant a retenu le Samsung
+comme `source` du person entity, donc Nathan est apparu `not_home`,
+`zone.home` est tombé à 0, et l'armement automatique s'est déclenché
+5 min plus tard.
+
+⚠️ Correspondance téléphones ↔ personnes (rétablie, mon hypothèse
+précédente était inversée) :
+- `person.nathan_dondey` → `device_tracker.nixel_8` (« Nixel 8 » = le
+  Pixel 8 de Nathan) + `device_tracker.samsung_a34` (pro)
+- `person.pauline` → `device_tracker.pixel_8`
+Donc `notify.mobile_app_nixel_8` = Nathan, `notify.mobile_app_pixel_8`
+= Pauline. La note du 13/08 disant l'inverse était fausse.
+
+Actions :
+- `automation.alarme_armement_automatique_au_depart` : condition ajoutée
+  — n'arme pas si un téléphone du foyer (nixel_8, pixel_8, samsung_a34)
+  est à l'état `home`, même si l'entité `person` dit `not_home`.
+- `automation.notifications_relais_pixel_8_vers_samsung_a34` : **désactivée**
+  (le Pixel de Nathan est réparé). Conservée, réactivable si besoin.
+- **À faire par Nathan (bloqué côté outillage)** : retirer
+  `device_tracker.samsung_a34` de `person.nathan_dondey` —
+  Paramètres → Personnes → Nathan → retirer l'appareil. Sans ça, le
+  téléphone pro continuera de fausser `zone.home` (et donc la clim, le
+  robot, l'alarme, tout ce qui dépend de la présence).
