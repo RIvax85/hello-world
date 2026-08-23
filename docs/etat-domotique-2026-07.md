@@ -335,3 +335,38 @@ Actions :
   Paramètres → Personnes → Nathan → retirer l'appareil. Sans ça, le
   téléphone pro continuera de fausser `zone.home` (et donc la clim, le
   robot, l'alarme, tout ce qui dépend de la présence).
+
+### Correction des fiches Personne (23/08, après précision de Nathan)
+
+Pauline a cassé son Pixel 8 et utilise désormais le Samsung-A34 ; le Pixel
+de Nathan (« Nixel 8 ») est réparé. Fiches corrigées via l'API websocket
+(`person/update` — non exposé en REST) :
+
+| Personne | Avant | Après |
+|---|---|---|
+| Nathan | nixel_8 + samsung_a34 | **nixel_8** |
+| Pauline | pixel_8 (cassé) | **samsung_a34** |
+
+Vérifié juste après : Nathan `home` (source nixel_8), Pauline `home`
+(source samsung_a34), `zone.home` = 2. La présence est de nouveau fiable,
+donc aussi tout ce qui en dépend (armement/désarmement alarme, clim,
+robot aspirateur).
+
+Téléphones actifs et services de notification :
+- Nathan → `device_tracker.nixel_8` / `notify.mobile_app_nixel_8`
+- Pauline → `device_tracker.samsung_a34` / `notify.mobile_app_samsung_a34`
+- `pixel_8` : hors service, ne plus s'y fier.
+
+`automation.notifications_relais_pixel_8_vers_samsung_a34` : **réactivée**,
+description mise à jour — elle sert désormais son vrai objectif, faire
+suivre à Pauline les notifications que les ~21 automatisations envoient
+encore à `notify.mobile_app_pixel_8`.
+
+`automation.alarme_armement_automatique_au_depart` : liste des téléphones
+du garde-fou réduite à nixel_8 + samsung_a34 (pixel_8 exclu, pour qu'un
+état périmé `home` ne puisse pas bloquer l'armement indéfiniment).
+
+Chantier propre à la rentrée : remplacer `notify.mobile_app_pixel_8` par
+`notify.mobile_app_samsung_a34` dans les automatisations et supprimer le
+relais — idéalement en passant par le script central `notifier` déjà
+prévu dans la liste ci-dessous.
