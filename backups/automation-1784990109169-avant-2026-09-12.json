@@ -1,0 +1,62 @@
+{
+    "id": "1784990109169",
+    "alias": "Arrosage Massifs fleurs (m\u00e9t\u00e9o-adaptatif)",
+    "description": "Arrose les massifs (valve 2, tuyau pr\u00e9perfor\u00e9) 1 jour sur 2 \u00e0 6h00, skip si pluie pr\u00e9vue >= 4mm. Dur\u00e9e 20 min via le timer int\u00e9gr\u00e9 du GIEX (coupure auto).",
+    "triggers": [
+        {
+            "trigger": "time",
+            "at": "06:00:00"
+        }
+    ],
+    "conditions": [],
+    "actions": [
+        {
+            "action": "weather.get_forecasts",
+            "target": {
+                "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony"
+            },
+            "data": {
+                "type": "daily"
+            },
+            "response_variable": "fc"
+        },
+        {
+            "variables": {
+                "precip": "{{ fc['weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony'].forecast[0].precipitation | float(0) }}",
+                "even_day": "{{ now().toordinal() % 2 == 0 }}"
+            }
+        },
+        {
+            "condition": "template",
+            "value_template": "{{ precip < 4 and even_day }}"
+        },
+        {
+            "action": "number.set_value",
+            "target": {
+                "entity_id": "number.arrosage_automatique_timer_2"
+            },
+            "data": {
+                "value": 20
+            }
+        },
+        {
+            "delay": {
+                "seconds": 3
+            }
+        },
+        {
+            "action": "switch.turn_on",
+            "target": {
+                "entity_id": "switch.arrosage_automatique_valve_2"
+            }
+        },
+        {
+            "action": "notify.mobile_app_pixel_8",
+            "data": {
+                "title": "\ud83c\udf38 Arrosage massifs",
+                "message": "Massifs arros\u00e9s 20 min. Pluie pr\u00e9vue {{ precip }}mm."
+            }
+        }
+    ],
+    "mode": "single"
+}
