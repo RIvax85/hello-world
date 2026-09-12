@@ -1,0 +1,17 @@
+{
+    "alias": "G\u00e2che portillon",
+    "description": "Ouvre la g\u00e2che \u00e9lectrique du portillon (portier Dahua)",
+    "icon": "mdi:lock-open-variant",
+    "mode": "single",
+    "sequence": [
+        {
+            "action": "dahua.vto_open_door",
+            "target": {
+                "entity_id": "camera.portillon_main"
+            },
+            "data": {
+                "door_id": 1
+            }
+        }
+    ]
+}

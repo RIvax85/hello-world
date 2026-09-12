@@ -1,0 +1,17 @@
+{
+    "alias": "Volets Nord \u2014 Fermer",
+    "icon": "mdi:window-shutter",
+    "sequence": [
+        {
+            "action": "cover.close_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_10_shutter",
+                    "cover.rts_12_shutter",
+                    "cover.rts_4_shutter",
+                    "cover.rts_6_shutter"
+                ]
+            }
+        }
+    ]
+}

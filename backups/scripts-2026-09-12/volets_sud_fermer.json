@@ -1,0 +1,15 @@
+{
+    "alias": "Volets Sud \u2014 Fermer",
+    "icon": "mdi:window-shutter",
+    "sequence": [
+        {
+            "action": "cover.close_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_14_shutter",
+                    "cover.rts_2_shutter"
+                ]
+            }
+        }
+    ]
+}

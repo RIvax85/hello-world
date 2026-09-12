@@ -1,0 +1,30 @@
+{
+    "sequence": [
+        {
+            "action": "switch.turn_on",
+            "metadata": {},
+            "data": {},
+            "target": {
+                "device_id": "f9857dcb6d007ff8101342260a4d0ada"
+            }
+        },
+        {
+            "delay": {
+                "hours": 0,
+                "minutes": 0,
+                "seconds": 1,
+                "milliseconds": 0
+            }
+        },
+        {
+            "action": "switch.turn_off",
+            "metadata": {},
+            "target": {
+                "device_id": "f9857dcb6d007ff8101342260a4d0ada"
+            },
+            "data": {}
+        }
+    ],
+    "alias": "Portail",
+    "description": ""
+}

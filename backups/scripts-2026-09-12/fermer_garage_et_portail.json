@@ -1,0 +1,38 @@
+{
+    "sequence": [
+        {
+            "if": [
+                {
+                    "condition": "state",
+                    "entity_id": "binary_sensor.capteur_porte_garage_contact",
+                    "state": [
+                        "on"
+                    ]
+                }
+            ],
+            "then": [
+                {
+                    "action": "script.garage_impulsion"
+                },
+                {
+                    "action": "script.ouvrir_le_portail"
+                }
+            ],
+            "else": [
+                {
+                    "action": "tts.speak",
+                    "target": {
+                        "entity_id": "tts.google_translate_en_com"
+                    },
+                    "data": {
+                        "media_player_entity_id": "media_player.paire_sejour",
+                        "message": "La porte de garage est d\u00e9j\u00e0 ferm\u00e9e."
+                    }
+                }
+            ]
+        }
+    ],
+    "alias": "Fermer garage et portail",
+    "mode": "single",
+    "description": ""
+}

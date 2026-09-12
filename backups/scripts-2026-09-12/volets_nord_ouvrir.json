@@ -1,0 +1,17 @@
+{
+    "alias": "Volets Nord \u2014 Ouvrir",
+    "icon": "mdi:window-shutter-open",
+    "sequence": [
+        {
+            "action": "cover.open_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_10_shutter",
+                    "cover.rts_12_shutter",
+                    "cover.rts_4_shutter",
+                    "cover.rts_6_shutter"
+                ]
+            }
+        }
+    ]
+}

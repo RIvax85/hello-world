@@ -1,0 +1,15 @@
+{
+    "alias": "Volets Sud \u2014 Ouvrir",
+    "icon": "mdi:window-shutter-open",
+    "sequence": [
+        {
+            "action": "cover.open_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_14_shutter",
+                    "cover.rts_2_shutter"
+                ]
+            }
+        }
+    ]
+}

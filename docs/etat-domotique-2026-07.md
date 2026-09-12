@@ -496,3 +496,74 @@ arrière sur une automatisation :
 - Appel direct du script avec image → exécution propre.
 - Déclenchement de `automation.portillon_sonnette` → `script.notifier`
   appelé dans la même milliseconde.
+
+## 2026-09-12 (soir) — Ménage des entités fantômes
+
+### Correction de mon propre chiffre
+
+J'avais annoncé « 125 entités indisponibles ». C'était faux : ce compte
+mélangeait `unavailable` et `unknown`, or `unknown` est l'état **normal
+au repos** des domaines `scene`, `button`, `number`, `select`, `stt` et
+`tts` — ils n'ont pas d'état tant qu'on ne s'en sert pas. Les 43 « scènes
+Hue cassées » et les 20 « entités MQTT cassées » n'avaient rien de cassé.
+
+Compte réel avant ménage : **33 entités `unavailable`**, dont 26 issues
+du KLF200.
+
+### Supprimé
+
+- **Intégration `velux` (VELUX_KLF_C770)**, entry_id
+  `01KW4P71CGPSZQGEAC129BRVY7` → 26 entités disparues (13 `button`,
+  8 `cover`, 4 `light`, dont les fantômes `cover.combles_volet_*`,
+  `cover.dependance_*`, `cover.rdc_store_veranda`, `cover.store_banne`
+  et `light.store_banne_lumiere_1..4`). Vérifié avant suppression :
+  aucune automatisation ne les référençait.
+- **Intégration `zha` (SONOFF Zigbee 3.0 USB Dongle Plus V2)**, entry_id
+  `01KW0CQR735YNQHKV4SP63EZEX`, en `not_loaded` — elle ne pouvait pas
+  démarrer, le dongle étant utilisé par Zigbee2MQTT. Reliquat d'une
+  ancienne configuration.
+- 3 tuiles du dashboard Maison (Combles Escalier / Lit / SdB) qui
+  pointaient vers les entités supprimées. Sauvegarde de la configuration
+  précédente : `backups/dashboard-maison-2026-09-12.json`.
+
+Résultat : **743 → 716 entités**, **33 → 7 `unavailable`**.
+
+### 🔴 Bug majeur trouvé au passage : « Bonne Nuit » n'armait pas l'alarme
+
+`script.bonne_nuit` appelait `cover.open_cover` sur
+`cover.rdc_store_veranda` — l'entité VELUX morte depuis le retrait du
+KLF200 en juillet. L'appel sur une entité `unavailable` lève une erreur
+et **interrompt le script**, si bien que les deux dernières étapes,
+`climate.turn_off` et surtout `alarm_control_panel.alarm_arm_night`,
+n'étaient jamais exécutées.
+
+C'est l'explication du problème signalé par Pauline fin juillet
+(« l'automatisme Google Bonne nuit ne met pas l'alarme »), resté non
+diagnostiqué pendant sept semaines.
+
+Corrections :
+- entité remplacée par `cover.salle_a_manger_store_veranda` (Overkiz),
+  même action `open_cover` — à confirmer par Nathan : l'intention est
+  bien de **déployer** le store véranda pour la nuit ?
+- `continue_on_error: true` ajouté sur toutes les étapes de pilotage
+  (lumières, volets, store, clim) : un appareil injoignable ne peut plus
+  empêcher l'armement de l'alarme.
+- Sauvegarde de l'ancien script : `backups/scripts-2026-09-12/bonne_nuit.json`
+  (les 15 scripts ont été archivés).
+
+### Les 7 entités encore `unavailable` — à regarder, pas à supprimer
+
+| Entité | Lecture |
+|---|---|
+| `light.jardin_lumiere_banne_1` + ses 3 boutons | La **seule** lumière du store banne récupérée en juillet est de nouveau hors ligne. À vérifier côté TaHoma. |
+| `light.veranda_lampadaire_veranda` | Lampe Hue de la véranda injoignable (débranchée ?). |
+| `binary_sensor.portillon_alarm_local` | Capteur du portier Dahua. |
+| `media_player.freebox_player_pop` | Freebox Player en veille — normal. |
+
+### À investiguer plus tard
+
+**Trois entrées Overkiz** coexistent : deux `ndondey@gmail.com` (chargées)
+et une `Passerelle : 2047-0740-8349` en `not_loaded`
+(entry_id `01KW0CQHGPV7C7BRYEDW1MHR35`). Probable reliquat d'une tentative
+d'API locale. Non touché ce soir, faute de pouvoir vérifier quelles
+entités dépendent de quelle entrée sans risque.

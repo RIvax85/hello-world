@@ -1,0 +1,96 @@
+{
+    "alias": "Notifier",
+    "icon": "mdi:cellphone-message",
+    "description": "Point d'entree unique pour toutes les notifications de la maison. Envoie aux telephones actifs du foyer et journalise dans le logbook. Le jour ou un telephone change, seule la sequence de ce script est a modifier.",
+    "mode": "parallel",
+    "max": 25,
+    "fields": {
+        "titre": {
+            "name": "Titre",
+            "required": true,
+            "selector": {
+                "text": null
+            }
+        },
+        "message": {
+            "name": "Message",
+            "required": true,
+            "selector": {
+                "text": null
+            }
+        },
+        "extra": {
+            "name": "Donnees",
+            "required": false,
+            "description": "Bloc data de la notification mobile (image, priority, ttl...)",
+            "selector": {
+                "object": null
+            }
+        },
+        "cible": {
+            "name": "Destinataire",
+            "required": false,
+            "description": "tous (defaut), nathan ou pauline",
+            "selector": {
+                "select": {
+                    "options": [
+                        "tous",
+                        "nathan",
+                        "pauline"
+                    ]
+                }
+            }
+        }
+    },
+    "sequence": [
+        {
+            "variables": {
+                "c": "{{ cible | default('tous', true) }}",
+                "payload": "{{ extra | default({}, true) }}"
+            }
+        },
+        {
+            "if": [
+                {
+                    "condition": "template",
+                    "value_template": "{{ c in ['tous','nathan'] }}"
+                }
+            ],
+            "then": [
+                {
+                    "action": "notify.mobile_app_nixel_8",
+                    "data": {
+                        "title": "{{ titre }}",
+                        "message": "{{ message }}",
+                        "data": "{{ payload }}"
+                    }
+                }
+            ]
+        },
+        {
+            "if": [
+                {
+                    "condition": "template",
+                    "value_template": "{{ c in ['tous','pauline'] }}"
+                }
+            ],
+            "then": [
+                {
+                    "action": "notify.mobile_app_samsung_a34",
+                    "data": {
+                        "title": "{{ titre }}",
+                        "message": "{{ message }}",
+                        "data": "{{ payload }}"
+                    }
+                }
+            ]
+        },
+        {
+            "action": "logbook.log",
+            "data": {
+                "name": "\ud83d\udcf1 {{ titre }}",
+                "message": "{{ message }}"
+            }
+        }
+    ]
+}

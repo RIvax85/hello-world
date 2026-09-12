@@ -1,0 +1,17 @@
+{
+    "alias": "Volets R+1 \u2014 Ouvrir",
+    "icon": "mdi:window-shutter-open",
+    "sequence": [
+        {
+            "action": "cover.open_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_8_shutter",
+                    "cover.rts_10_shutter",
+                    "cover.rts_12_shutter",
+                    "cover.rts_14_shutter"
+                ]
+            }
+        }
+    ]
+}

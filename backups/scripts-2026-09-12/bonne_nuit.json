@@ -1,0 +1,51 @@
+{
+    "alias": "Bonne Nuit",
+    "icon": "mdi:weather-night",
+    "mode": "single",
+    "sequence": [
+        {
+            "action": "light.turn_off",
+            "target": {
+                "entity_id": "all"
+            }
+        },
+        {
+            "action": "cover.close_cover",
+            "target": {
+                "entity_id": [
+                    "cover.rts_2_shutter",
+                    "cover.rts_4_shutter",
+                    "cover.rts_6_shutter",
+                    "cover.rts_8_shutter",
+                    "cover.rts_10_shutter",
+                    "cover.rts_12_shutter",
+                    "cover.rts_14_shutter"
+                ]
+            },
+            "data": {}
+        },
+        {
+            "action": "cover.open_cover",
+            "metadata": {},
+            "target": {
+                "entity_id": "cover.rdc_store_veranda"
+            },
+            "data": {}
+        },
+        {
+            "action": "climate.turn_off",
+            "target": {
+                "entity_id": "climate.salon_clim_salon_climate"
+            },
+            "data": {}
+        },
+        {
+            "action": "alarm_control_panel.alarm_arm_night",
+            "target": {
+                "entity_id": "alarm_control_panel.alarmo"
+            },
+            "data": {}
+        }
+    ],
+    "description": ""
+}

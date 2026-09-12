@@ -1,0 +1,355 @@
+{
+  "views": [
+    {
+      "type": "sections",
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Ouvrants",
+              "heading_style": "title"
+            },
+            {
+              "type": "tile",
+              "entity": "script.ouvrir_garage_et_portail",
+              "vertical": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "script.ouvrir_garage_et_portail",
+                "target": {}
+              },
+              "features_position": "bottom"
+            },
+            {
+              "type": "tile",
+              "entity": "script.ouvrir_le_portail",
+              "vertical": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "script.ouvrir_le_portail",
+                "target": {}
+              },
+              "features_position": "bottom"
+            },
+            {
+              "type": "tile",
+              "entity": "script.garage_impulsion",
+              "vertical": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "script.garage_impulsion",
+                "target": {}
+              },
+              "features_position": "bottom"
+            },
+            {
+              "type": "tile",
+              "entity": "script.ouvrir_la_gache",
+              "name": "Gâche portillon",
+              "icon": "mdi:lock-open-variant",
+              "vertical": false,
+              "tap_action": {
+                "action": "perform-action",
+                "perform_action": "script.ouvrir_la_gache",
+                "target": {}
+              },
+              "features_position": "bottom"
+            },
+            {
+              "type": "tile",
+              "entity": "binary_sensor.capteur_porte_garage_contact",
+              "name": "Porte de garage",
+              "icon": "mdi:garage"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.salle_a_manger_store_veranda"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.jardin_store_banne"
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Sécurité",
+              "heading_style": "title",
+              "icon": "mdi:shield-home"
+            },
+            {
+              "type": "tile",
+              "entity": "alarm_control_panel.alarmo",
+              "name": "Alarme",
+              "icon": "mdi:shield-lock"
+            },
+            {
+              "type": "tile",
+              "entity": "input_boolean.mode_vacances",
+              "name": "Mode Vacances",
+              "icon": "mdi:beach"
+            },
+            {
+              "type": "tile",
+              "entity": "switch.simulation_vacances",
+              "name": "Simulation présence",
+              "icon": "mdi:home-clock"
+            },
+            {
+              "type": "tile",
+              "entity": "camera.foscam_entree",
+              "name": "Caméra Entrée",
+              "icon": "mdi:cctv",
+              "vertical": false,
+              "features_position": "bottom"
+            },
+            {
+              "type": "tile",
+              "entity": "camera.foscam_veranda",
+              "name": "Caméra Jardin",
+              "icon": "mdi:cctv",
+              "vertical": false,
+              "features_position": "bottom"
+            },
+            {
+              "type": "picture-entity",
+              "entity": "camera.exterieur_camera_terrasse_fluide",
+              "name": "Caméra Terrasse",
+              "camera_view": "auto",
+              "show_state": false
+            },
+            {
+              "type": "picture-entity",
+              "entity": "camera.portillon_sub",
+              "name": "Portillon",
+              "camera_view": "auto",
+              "show_state": false
+            },
+            {
+              "type": "tile",
+              "entity": "binary_sensor.portillon_button_pressed",
+              "name": "Sonnette portillon",
+              "icon": "mdi:bell-ring"
+            },
+            {
+              "type": "tile",
+              "entity": "binary_sensor.portillon_door_status",
+              "name": "Portillon ouvert",
+              "icon": "mdi:gate"
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Lumières",
+              "heading_style": "title"
+            },
+            {
+              "type": "tile",
+              "entity": "light.salon_lampe_yucca"
+            },
+            {
+              "type": "tile",
+              "entity": "light.salon_canape"
+            },
+            {
+              "type": "tile",
+              "entity": "switch.guirlande_terrasse"
+            },
+            {
+              "type": "tile",
+              "entity": "light.jardin_lumiere_banne_1",
+              "name": "Store Banne LED"
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Volets",
+              "heading_style": "title",
+              "icon": "mdi:window-shutter"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_2_shutter",
+              "name": "Terrasse"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_4_shutter",
+              "name": "Salon"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_6_shutter",
+              "name": "Entrée"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_8_shutter",
+              "name": "SdB"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_10_shutter",
+              "name": "Malo"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_12_shutter",
+              "name": "Robin"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.rts_14_shutter",
+              "name": "June"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.combles_volet_escalier",
+              "name": "Combles Escalier"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.combles_volet_lit",
+              "name": "Combles Lit"
+            },
+            {
+              "type": "tile",
+              "entity": "cover.combles_volet_sdb",
+              "name": "Combles SdB"
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Température",
+              "heading_style": "title",
+              "icon": "mdi:temperature-celsius"
+            },
+            {
+              "type": "thermostat",
+              "entity": "climate.salon_clim_salon_climate",
+              "name": "Clim Salon"
+            },
+            {
+              "type": "tile",
+              "entity": "sensor.capteur_temperature_salon_temperature",
+              "name": "Température Salon",
+              "icon": "mdi:home-thermometer",
+              "grid_options": {
+                "columns": 6,
+                "rows": 2
+              }
+            },
+            {
+              "type": "tile",
+              "entity": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+              "name": "Température Extérieure",
+              "icon": "mdi:sun-thermometer",
+              "state_content": "temperature",
+              "grid_options": {
+                "columns": 6,
+                "rows": 2
+              }
+            },
+            {
+              "type": "tile",
+              "entity": "sensor.meteo_france_alert_for_department_92_92_weather_alert",
+              "name": "Vigilance Météo-France",
+              "icon": "mdi:weather-cloudy-alert",
+              "grid_options": {
+                "columns": 6,
+                "rows": 2
+              }
+            },
+            {
+              "type": "tile",
+              "entity": "sensor.capteur_temperature_combles_temperature",
+              "name": "Température Combles",
+              "icon": "mdi:home-thermometer-outline",
+              "grid_options": {
+                "columns": 6,
+                "rows": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "heading",
+              "heading": "Arrosage",
+              "heading_style": "title",
+              "icon": "mdi:sprinkler-variant"
+            },
+            {
+              "type": "tile",
+              "entity": "switch.arrosage_automatique_valve_1",
+              "name": "Potager",
+              "icon": "mdi:sprinkler"
+            },
+            {
+              "type": "tile",
+              "entity": "switch.arrosage_automatique_valve_2",
+              "name": "Massifs",
+              "icon": "mdi:flower"
+            },
+            {
+              "type": "tile",
+              "entity": "number.arrosage_automatique_timer_1",
+              "name": "Durée Potager",
+              "features": [
+                {
+                  "type": "numeric-input",
+                  "style": "buttons"
+                }
+              ]
+            },
+            {
+              "type": "tile",
+              "entity": "number.arrosage_automatique_timer_2",
+              "name": "Durée Massifs",
+              "features": [
+                {
+                  "type": "numeric-input",
+                  "style": "buttons"
+                }
+              ]
+            },
+            {
+              "type": "tile",
+              "entity": "sensor.arrosage_automatique_countdown_1",
+              "name": "Décompte Potager"
+            },
+            {
+              "type": "tile",
+              "entity": "sensor.arrosage_automatique_countdown_2",
+              "name": "Décompte Massifs"
+            },
+            {
+              "type": "tile",
+              "entity": "sensor.arrosage_automatique_battery",
+              "name": "Batterie GIEX"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
