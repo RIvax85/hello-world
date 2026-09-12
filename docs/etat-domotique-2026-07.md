@@ -542,9 +542,10 @@ C'est l'explication du problème signalé par Pauline fin juillet
 diagnostiqué pendant sept semaines.
 
 Corrections :
-- entité remplacée par `cover.salle_a_manger_store_veranda` (Overkiz),
-  même action `open_cover` — à confirmer par Nathan : l'intention est
-  bien de **déployer** le store véranda pour la nuit ?
+- l'étape store véranda ne le **déploie plus** : Nathan ne veut pas y
+  toucher au coucher. Elle se contente désormais de vérifier qu'il est
+  rentré (`closed`) et ne le rentre que s'il ne l'est pas — il l'est
+  normalement déjà, la remontée de 17h s'en charge.
 - `continue_on_error: true` ajouté sur toutes les étapes de pilotage
   (lumières, volets, store, clim) : un appareil injoignable ne peut plus
   empêcher l'armement de l'alarme.
