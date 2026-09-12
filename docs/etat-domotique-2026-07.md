@@ -440,3 +440,59 @@ exclusions dans `configuration.yaml`, ou base corrompue.
 Ordre conseillé : sauvegarde complète → add-ons (Mosquitto, Z2M, File
 editor) → intégrations HACS → HA Core → HA OS → firmwares Zigbee en
 dernier (risque de brique, à faire quand on est sur place).
+
+## 2026-09-12 (soir) — Script de notification centralisé
+
+Fin du bricolage : toutes les notifications passent désormais par un point
+d'entrée unique, `script.notifier`.
+
+### Le script
+
+Champs : `titre` (requis), `message` (requis), `extra` (bloc `data` de la
+notification mobile : image, priority, ttl…), `cible` (`tous` par défaut,
+ou `nathan` / `pauline`). Il envoie aux téléphones actifs du foyer puis
+journalise le message via `logbook.log`.
+
+Séquence : `notify.mobile_app_nixel_8` (Nathan) et/ou
+`notify.mobile_app_samsung_a34` (Pauline) selon `cible`. **Le jour où un
+téléphone change, c'est la seule chose à modifier dans toute
+l'installation.**
+
+### Migration
+
+23 automatisations migrées, 24 appels `script.notifier` créés (le Garage
+en a deux, une par branche). Vérifié après coup : plus aucun appel
+`notify.mobile_app_*` ailleurs que dans le relais désactivé, aucune
+configuration illisible, aucune automatisation en état anormal.
+
+Les paires `notify` n'étaient pas toujours adjacentes (anti-chaleur) et
+parfois imbriquées dans une boucle (snapshots caméras) ou dans les
+branches d'un `choose` (garage) : la migration a été faite par parcours
+récursif, en regroupant les appels de même charge utile.
+
+Trois automatisations ne notifiaient **que** le Pixel mort de Pauline —
+`Capteurs — Alerte batterie faible`, `Clim Salon — Arrêt si ouverture RDC`
+et `Clim Salon — Démarrage automatique si chaud` : Nathan n'en recevait
+rien. Elles notifient maintenant les deux téléphones.
+
+### Rustines retirées
+
+- `automation.notifications_relais_pixel_8_vers_samsung_a34` : **désactivée**
+  (plus personne n'écrit vers `mobile_app_pixel_8`). Conservée au cas où.
+- `automation.archive_notifications` : **désactivée** — elle journalisait
+  les appels vers `mobile_app_pixel_8` ; le script fait désormais le
+  `logbook.log` lui-même, sans risque de doublon.
+
+### Sauvegardes
+
+Les 43 configurations d'automatisation d'avant migration sont dans
+`backups/automations-2026-09-12/` (une par identifiant). Pour revenir en
+arrière sur une automatisation :
+`curl -X POST -H "Authorization: Bearer $HA_TOKEN" -H "Content-Type: application/json" \
+  -d @backups/automations-2026-09-12/<id>.json "$HA_URL/api/config/automation/config/<id>"`
+
+### Vérifié en réel
+
+- Appel direct du script avec image → exécution propre.
+- Déclenchement de `automation.portillon_sonnette` → `script.notifier`
+  appelé dans la même milliseconde.

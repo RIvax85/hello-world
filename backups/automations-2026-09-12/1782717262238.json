@@ -1,0 +1,24 @@
+{
+  "id": "1782717262238",
+  "alias": "Alarme — TTS Déclenchement imminent",
+  "description": "Annonce vocale pendant le délai d'entrée (pending = capteur déclenché, alarme sur le point de sonner)",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": "pending"
+    }
+  ],
+  "actions": [
+    {
+      "action": "tts.cloud_say",
+      "target": {
+        "entity_id": "media_player.paire_sejour"
+      },
+      "data": {
+        "message": "Attention. Alarme sur le point de se déclencher. Désarmez maintenant."
+      }
+    }
+  ],
+  "mode": "single"
+}

@@ -1,0 +1,58 @@
+{
+  "id": "1782657036799",
+  "alias": "Mode Vacances — Simulation présence",
+  "description": "Active/désactive la simulation de présence selon le mode vacances",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "to": "on",
+      "id": "vacances_on"
+    },
+    {
+      "trigger": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "to": "off",
+      "id": "vacances_off"
+    }
+  ],
+  "actions": [
+    {
+      "choose": [
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "vacances_on"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "switch.turn_on",
+              "target": {
+                "entity_id": "switch.simulation_vacances"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "vacances_off"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "switch.turn_off",
+              "target": {
+                "entity_id": "switch.simulation_vacances"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mode": "single"
+}

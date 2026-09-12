@@ -1,0 +1,17 @@
+{
+  "id": "1782769610013",
+  "alias": "Volets R+1 — Fermeture 5h",
+  "description": "Ferme les volets R+1 à 5h pour garder la fraîcheur",
+  "triggers": [
+    {
+      "trigger": "time",
+      "at": "05:00:00"
+    }
+  ],
+  "actions": [
+    {
+      "action": "script.volets_r1_fermer"
+    }
+  ],
+  "mode": "single"
+}

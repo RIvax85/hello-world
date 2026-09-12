@@ -1,0 +1,28 @@
+{
+  "id": "1782717269186",
+  "alias": "Alarme — TTS Activée",
+  "description": "Annonce vocale quand l'alarme est armée",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": [
+        "armed_night",
+        "armed_away",
+        "armed_home"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "tts.cloud_say",
+      "target": {
+        "entity_id": "media_player.paire_sejour"
+      },
+      "data": {
+        "message": "Alarme activée."
+      }
+    }
+  ],
+  "mode": "single"
+}

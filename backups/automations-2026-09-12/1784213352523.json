@@ -1,0 +1,64 @@
+{
+  "id": "1784213352523",
+  "alias": "Stores Vérandà + Banne — Remontée si vent fort",
+  "description": "Remonte les stores vérandà et banne si Météo France annonce du vent > 30 km/h ou des rafales > 40 km/h (à remplacer par un anémomètre local à terme)",
+  "triggers": [
+    {
+      "above": 30,
+      "attribute": "wind_speed",
+      "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+      "id": "vent",
+      "trigger": "numeric_state"
+    },
+    {
+      "above": 40,
+      "attribute": "wind_gust_speed",
+      "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+      "id": "rafales",
+      "trigger": "numeric_state"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "or",
+      "conditions": [
+        {
+          "condition": "state",
+          "entity_id": "cover.salle_a_manger_store_veranda",
+          "state": "open"
+        },
+        {
+          "condition": "state",
+          "entity_id": "cover.jardin_store_banne",
+          "state": "open"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "cover.close_cover",
+      "target": {
+        "entity_id": [
+          "cover.salle_a_manger_store_veranda",
+          "cover.jardin_store_banne"
+        ]
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "message": "💨 Vent fort ({{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'wind_speed') }} km/h, rafales {{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'wind_gust_speed') }} km/h) — Stores vérandà et banne rentrés automatiquement.",
+        "title": "Stores"
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "message": "💨 Vent fort ({{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'wind_speed') }} km/h, rafales {{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'wind_gust_speed') }} km/h) — Stores vérandà et banne rentrés automatiquement.",
+        "title": "Stores"
+      }
+    }
+  ],
+  "mode": "single"
+}

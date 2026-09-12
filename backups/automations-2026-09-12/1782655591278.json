@@ -1,0 +1,32 @@
+{
+  "id": "1782655591278",
+  "alias": "Alarme — Désarmement automatique 5h30",
+  "description": "Désarme automatiquement l'alarme en mode nuit à 5h30. Inactif quand le mode vacances est activé.",
+  "triggers": [
+    {
+      "trigger": "time",
+      "at": "05:30:00"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "state": "armed_night"
+    },
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "state": "off"
+    }
+  ],
+  "actions": [
+    {
+      "action": "alarm_control_panel.alarm_disarm",
+      "target": {
+        "entity_id": "alarm_control_panel.alarmo"
+      }
+    }
+  ],
+  "mode": "single"
+}

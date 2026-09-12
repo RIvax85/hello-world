@@ -1,0 +1,52 @@
+{
+  "id": "1785316165854",
+  "alias": "Alarme — Sirène continue pendant le déclenchement",
+  "description": "La sirène Zigbee s'arrête seule après 10 s (durée par défaut Z2M). Cette automatisation relance la sonnerie toutes les 8 s tant qu'Alarmo est en état 'triggered', avec un plafond de sécurité d'environ 3 minutes, puis coupe proprement.",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": "triggered"
+    }
+  ],
+  "actions": [
+    {
+      "repeat": {
+        "while": [
+          {
+            "condition": "state",
+            "entity_id": "alarm_control_panel.alarmo",
+            "state": "triggered"
+          },
+          {
+            "condition": "template",
+            "value_template": "{{ repeat.index <= 22 }}"
+          }
+        ],
+        "sequence": [
+          {
+            "action": "siren.turn_on",
+            "target": {
+              "entity_id": "siren.sirene"
+            },
+            "data": {
+              "duration": 15
+            }
+          },
+          {
+            "delay": {
+              "seconds": 8
+            }
+          }
+        ]
+      }
+    },
+    {
+      "action": "siren.turn_off",
+      "target": {
+        "entity_id": "siren.sirene"
+      }
+    }
+  ],
+  "mode": "restart"
+}

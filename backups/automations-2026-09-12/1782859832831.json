@@ -1,0 +1,48 @@
+{
+  "id": "1782859832831",
+  "alias": "Clim Salon — Arrêt si ouverture RDC",
+  "description": "Coupe la clim si une porte ou fenêtre du RDC reste ouverte 5 min",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": [
+        "binary_sensor.0x00158d000689a40f_contact",
+        "binary_sensor.capteur_d_ouverture_porte_principale_contact",
+        "binary_sensor.capteur_d_ouverture_salon_contact",
+        "binary_sensor.capteur_d_ouverture_veranda_contact"
+      ],
+      "to": "on",
+      "for": {
+        "minutes": 5
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "not",
+      "conditions": [
+        {
+          "condition": "state",
+          "entity_id": "climate.salon_clim_salon_climate",
+          "state": "off"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "climate.turn_off",
+      "target": {
+        "entity_id": "climate.salon_clim_salon_climate"
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "❄️ Clim arrêtée",
+        "message": "{{ trigger.to_state.name }} ouverte depuis 5 min — clim salon coupée."
+      }
+    }
+  ],
+  "mode": "single"
+}

@@ -1,0 +1,62 @@
+{
+  "id": "1782768679647",
+  "alias": "Spirou — Lancement au départ le matin",
+  "description": "Lance Spirou quand tout le monde quitte la maison en semaine le matin, si pas déjà en nettoyage",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "zone.home",
+      "to": "0",
+      "id": "maison_vide"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "time",
+      "after": "07:00:00",
+      "before": "12:00:00",
+      "weekday": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ]
+    },
+    {
+      "condition": "state",
+      "entity_id": "binary_sensor.spirou_nettoyage",
+      "state": "off"
+    },
+    {
+      "condition": "state",
+      "entity_id": "vacuum.spirou",
+      "state": "docked"
+    }
+  ],
+  "actions": [
+    {
+      "action": "vacuum.start",
+      "metadata": {},
+      "target": {
+        "entity_id": "vacuum.spirou"
+      },
+      "data": {}
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "metadata": {},
+      "data": {
+        "message": "Spirou lancé."
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "metadata": {},
+      "data": {
+        "message": "Spirou lancé."
+      }
+    }
+  ],
+  "mode": "single"
+}

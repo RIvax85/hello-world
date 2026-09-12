@@ -1,0 +1,59 @@
+{
+  "id": "1783892025875",
+  "alias": "Alarme — Snapshots caméras au déclenchement",
+  "description": "Envoie les photos des caméras à Nathan et Pauline quand l'alarme se déclenche",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": "triggered"
+    }
+  ],
+  "actions": [
+    {
+      "repeat": {
+        "for_each": [
+          {
+            "entity": "camera.exterieur_camera_terrasse_fluide",
+            "name": "Terrasse"
+          },
+          {
+            "entity": "camera.foscam_entree",
+            "name": "Entrée"
+          },
+          {
+            "entity": "camera.foscam_veranda",
+            "name": "Véranda"
+          },
+          {
+            "entity": "camera.portillon_main",
+            "name": "Portillon"
+          }
+        ],
+        "sequence": [
+          {
+            "action": "notify.mobile_app_pixel_8",
+            "data": {
+              "title": "🚨 ALARME DÉCLENCHÉE",
+              "message": "Caméra {{ repeat.item.name }}",
+              "data": {
+                "image": "/api/camera_proxy/{{ repeat.item.entity }}"
+              }
+            }
+          },
+          {
+            "action": "notify.mobile_app_nixel_8",
+            "data": {
+              "title": "🚨 ALARME DÉCLENCHÉE",
+              "message": "Caméra {{ repeat.item.name }}",
+              "data": {
+                "image": "/api/camera_proxy/{{ repeat.item.entity }}"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "mode": "single"
+}

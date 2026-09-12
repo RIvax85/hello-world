@@ -1,0 +1,126 @@
+{
+  "id": "1786529937121",
+  "alias": "Vacances — Volets simulation de présence",
+  "description": "Fait vivre les volets non pilotés par l'intégration Presence Simulation (Terrasse, SdB, Malo, Robin, June), qui restaient fermés en permanence pendant les vacances. Ouverture le matin, fermeture à la mi-journée si forte chaleur, réouverture en soirée, fermeture pour la nuit. Horaires décalés aléatoirement pour paraître humain.",
+  "triggers": [
+    {
+      "trigger": "time",
+      "at": "08:15:00",
+      "id": "matin"
+    },
+    {
+      "trigger": "time",
+      "at": "13:00:00",
+      "id": "midi"
+    },
+    {
+      "trigger": "time",
+      "at": "19:00:00",
+      "id": "soir"
+    },
+    {
+      "trigger": "time",
+      "at": "22:00:00",
+      "id": "nuit"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "state": "on"
+    }
+  ],
+  "actions": [
+    {
+      "delay": {
+        "minutes": "{{ range(0, 45) | random }}"
+      }
+    },
+    {
+      "choose": [
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "matin"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "cover.open_cover",
+              "target": {
+                "entity_id": "{{ volets }}"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "midi"
+            },
+            {
+              "condition": "numeric_state",
+              "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+              "attribute": "temperature",
+              "above": 28
+            }
+          ],
+          "sequence": [
+            {
+              "action": "cover.close_cover",
+              "target": {
+                "entity_id": "{{ volets }}"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "soir"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "cover.open_cover",
+              "target": {
+                "entity_id": "{{ volets }}"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "nuit"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "cover.close_cover",
+              "target": {
+                "entity_id": "{{ volets }}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "volets": [
+      "cover.rts_2_shutter",
+      "cover.rts_8_shutter",
+      "cover.rts_10_shutter",
+      "cover.rts_12_shutter",
+      "cover.rts_14_shutter"
+    ]
+  },
+  "mode": "queued",
+  "max": 4
+}

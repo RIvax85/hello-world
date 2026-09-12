@@ -1,0 +1,39 @@
+{
+  "id": "1782859573331",
+  "alias": "Portillon — Sonnette",
+  "description": "Notification avec photo du portillon quand quelqu'un appuie sur le bouton",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "binary_sensor.portillon_button_pressed",
+      "to": "on"
+    }
+  ],
+  "actions": [
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "🔔 Sonnette",
+        "message": "Quelqu'un sonne au portillon.",
+        "data": {
+          "image": "/api/camera_proxy/camera.portillon_main",
+          "ttl": 0,
+          "priority": "high"
+        }
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "🔔 Sonnette",
+        "message": "Quelqu'un sonne au portillon.",
+        "data": {
+          "image": "/api/camera_proxy/camera.portillon_main",
+          "ttl": 0,
+          "priority": "high"
+        }
+      }
+    }
+  ],
+  "mode": "single"
+}

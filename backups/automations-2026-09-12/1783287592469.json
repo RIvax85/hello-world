@@ -1,0 +1,54 @@
+{
+  "id": "1783287592469",
+  "alias": "Alarme — Armement automatique au départ",
+  "description": "Arme l'alarme en mode Absence 5 min après que tout le monde soit parti (7h-22h). Garde-fou : n'arme pas si un téléphone actif du foyer (nixel_8 = Nathan, samsung_a34 = Pauline) est encore à l'état `home`, même si l'entité `person` correspondante indique not_home. Le pixel_8 (cassé) est volontairement exclu de la liste pour éviter qu'un état périmé ne bloque l'armement.",
+  "triggers": [
+    {
+      "below": 1,
+      "entity_id": "zone.home",
+      "for": {
+        "minutes": 5
+      },
+      "trigger": "numeric_state"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "state": "disarmed"
+    },
+    {
+      "condition": "time",
+      "after": "07:00:00",
+      "before": "22:00:00"
+    },
+    {
+      "condition": "template",
+      "value_template": "{% set tels = ['device_tracker.nixel_8','device_tracker.samsung_a34'] %}{% set ns = namespace(present=false) %}{% for t in tels %}{% if states[t] is not none and is_state(t,'home') %}{% set ns.present = true %}{% endif %}{% endfor %}{{ not ns.present }}"
+    }
+  ],
+  "actions": [
+    {
+      "action": "alarm_control_panel.alarm_arm_away",
+      "target": {
+        "entity_id": "alarm_control_panel.alarmo"
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "message": "Maison vide — alarme activée en mode Absence.",
+        "title": "🔒 Alarme armée"
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "message": "Maison vide — alarme activée en mode Absence.",
+        "title": "🔒 Alarme armée"
+      }
+    }
+  ],
+  "mode": "single"
+}

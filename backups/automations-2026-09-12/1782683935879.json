@@ -1,0 +1,46 @@
+{
+  "id": "1782683935879",
+  "alias": "Volets Sud — Réouverture au coucher du soleil",
+  "description": "Rouvre les volets sud 30 min après le coucher du soleil et rentre les stores banne et véranda",
+  "triggers": [
+    {
+      "event": "sunset",
+      "offset": "00:30:00",
+      "trigger": "sun"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.volets_sud_fermes_auto",
+      "state": "on"
+    }
+  ],
+  "actions": [
+    {
+      "action": "cover.open_cover",
+      "target": {
+        "entity_id": [
+          "cover.rts_2_shutter",
+          "cover.rts_14_shutter"
+        ]
+      }
+    },
+    {
+      "action": "cover.close_cover",
+      "target": {
+        "entity_id": [
+          "cover.jardin_store_banne",
+          "cover.salle_a_manger_store_veranda"
+        ]
+      }
+    },
+    {
+      "action": "input_boolean.turn_off",
+      "target": {
+        "entity_id": "input_boolean.volets_sud_fermes_auto"
+      }
+    }
+  ],
+  "mode": "single"
+}

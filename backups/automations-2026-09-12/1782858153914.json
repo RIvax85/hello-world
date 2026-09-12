@@ -1,0 +1,40 @@
+{
+  "id": "1782858153914",
+  "alias": "Stores Vérandà + Banne — Remontée 17h",
+  "description": "Remonte le store vérandà et le store banne à 17h, le soleil ne les atteint plus",
+  "triggers": [
+    {
+      "at": "17:00:00",
+      "trigger": "time"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "or",
+      "conditions": [
+        {
+          "condition": "state",
+          "entity_id": "cover.salle_a_manger_store_veranda",
+          "state": "open"
+        },
+        {
+          "condition": "state",
+          "entity_id": "cover.jardin_store_banne",
+          "state": "open"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "cover.close_cover",
+      "target": {
+        "entity_id": [
+          "cover.salle_a_manger_store_veranda",
+          "cover.jardin_store_banne"
+        ]
+      }
+    }
+  ],
+  "mode": "single"
+}

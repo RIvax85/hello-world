@@ -1,0 +1,109 @@
+{
+  "id": "1782683929809",
+  "alias": "Volets Sud — Fermeture anti-chaleur",
+  "description": "Ferme les volets côté sud à 11h si temp extérieure > 26°C, et déploie les stores (véranda 100 %, banne 40 % maxi) sauf pluie ou vent fort. Fonctionne aussi en mode vacances : le déploiement chaleur est autorisé, le drapeau `stores_deployes_pour_chaleur` empêche alors le garde-fou de les rentrer.",
+  "triggers": [
+    {
+      "at": "11:00:00",
+      "trigger": "time"
+    }
+  ],
+  "conditions": [
+    {
+      "above": 26,
+      "attribute": "temperature",
+      "condition": "numeric_state",
+      "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony"
+    }
+  ],
+  "actions": [
+    {
+      "action": "cover.close_cover",
+      "target": {
+        "entity_id": [
+          "cover.rts_2_shutter",
+          "cover.rts_14_shutter"
+        ]
+      }
+    },
+    {
+      "if": [
+        {
+          "condition": "not",
+          "conditions": [
+            {
+              "condition": "state",
+              "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+              "state": [
+                "rainy",
+                "pouring",
+                "lightning-rainy",
+                "lightning",
+                "hail"
+              ]
+            }
+          ]
+        },
+        {
+          "attribute": "wind_speed",
+          "below": 30,
+          "condition": "numeric_state",
+          "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony"
+        },
+        {
+          "attribute": "wind_gust_speed",
+          "below": 40,
+          "condition": "numeric_state",
+          "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony"
+        }
+      ],
+      "then": [
+        {
+          "action": "input_boolean.turn_on",
+          "target": {
+            "entity_id": "input_boolean.stores_deployes_pour_chaleur"
+          }
+        },
+        {
+          "action": "cover.set_cover_position",
+          "target": {
+            "entity_id": "cover.salle_a_manger_store_veranda"
+          },
+          "data": {
+            "position": 100
+          }
+        },
+        {
+          "action": "cover.set_cover_position",
+          "target": {
+            "entity_id": "cover.jardin_store_banne"
+          },
+          "data": {
+            "position": 40
+          }
+        }
+      ]
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "message": "Temp extérieure {{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'temperature') }}°C — Terrasse et June fermés{{ ', stores déployés (véranda 100 %, banne 40 %)' if is_state('input_boolean.stores_deployes_pour_chaleur','on') else ' — stores laissés rentrés (pluie ou vent)' }}.",
+        "title": "☀️ Volets sud fermés"
+      }
+    },
+    {
+      "action": "input_boolean.turn_on",
+      "target": {
+        "entity_id": "input_boolean.volets_sud_fermes_auto"
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "message": "Temp extérieure {{ state_attr('weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony', 'temperature') }}°C — Terrasse et June fermés{{ ', stores déployés (véranda 100 %, banne 40 %)' if is_state('input_boolean.stores_deployes_pour_chaleur','on') else ' — stores laissés rentrés (pluie ou vent)' }}.",
+        "title": "☀️ Volets sud fermés"
+      }
+    }
+  ],
+  "mode": "single"
+}

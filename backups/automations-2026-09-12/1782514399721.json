@@ -1,0 +1,123 @@
+{
+  "id": "1782514399721",
+  "alias": "Garage : Sécurité Porte Ouverte",
+  "description": "Alerte après 30 min, répétition toutes les 15 min, et confirmation de fermeture.",
+  "triggers": [
+    {
+      "entity_id": [
+        "binary_sensor.capteur_porte_garage_contact"
+      ],
+      "to": [
+        "on"
+      ],
+      "for": {
+        "minutes": 30
+      },
+      "id": "alerte_initiale",
+      "trigger": "state"
+    },
+    {
+      "entity_id": [
+        "binary_sensor.capteur_porte_garage_contact"
+      ],
+      "to": [
+        "off"
+      ],
+      "id": "porte_fermee",
+      "trigger": "state"
+    }
+  ],
+  "conditions": [],
+  "actions": [
+    {
+      "choose": [
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "alerte_initiale"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "input_boolean.turn_on",
+              "target": {
+                "entity_id": "input_boolean.garage_alerte_active"
+              }
+            },
+            {
+              "repeat": {
+                "while": [
+                  {
+                    "condition": "state",
+                    "entity_id": "binary_sensor.capteur_porte_garage_contact",
+                    "state": [
+                      "on"
+                    ]
+                  }
+                ],
+                "sequence": [
+                  {
+                    "action": "notify.mobile_app_nixel_8",
+                    "data": {
+                      "message": "La porte du garage est ouverte depuis trop longtemps !",
+                      "title": "Alerte Garage"
+                    }
+                  },
+                  {
+                    "action": "notify.mobile_app_pixel_8",
+                    "data": {
+                      "message": "La porte du garage est ouverte depuis trop longtemps !",
+                      "title": "Alerte Garage"
+                    }
+                  },
+                  {
+                    "delay": {
+                      "minutes": 15
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": "porte_fermee"
+            },
+            {
+              "condition": "state",
+              "entity_id": "input_boolean.garage_alerte_active",
+              "state": "on"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "notify.mobile_app_nixel_8",
+              "data": {
+                "title": "Garage Sécurisé",
+                "message": "La porte du garage a bien été refermée."
+              }
+            },
+            {
+              "action": "notify.mobile_app_pixel_8",
+              "data": {
+                "message": "La porte du garage a bien été refermée.",
+                "title": "Garage Sécurisé"
+              }
+            },
+            {
+              "action": "input_boolean.turn_off",
+              "target": {
+                "entity_id": "input_boolean.garage_alerte_active"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mode": "restart"
+}

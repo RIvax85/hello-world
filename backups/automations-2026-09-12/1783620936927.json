@@ -1,0 +1,28 @@
+{
+  "id": "1783620936927",
+  "alias": "Archive Notifications",
+  "description": "Enregistre dans le journal chaque notification envoyée aux téléphones",
+  "triggers": [
+    {
+      "trigger": "event",
+      "event_type": "call_service",
+      "event_data": {
+        "domain": "notify"
+      }
+    }
+  ],
+  "conditions": [
+    "{{ trigger.event.data.service == 'mobile_app_pixel_8' }}"
+  ],
+  "actions": [
+    {
+      "action": "logbook.log",
+      "data": {
+        "name": "📱 {{ trigger.event.data.service_data.title | default('Notification') }}",
+        "message": "{{ trigger.event.data.service_data.message | default('(sans texte)') }}"
+      }
+    }
+  ],
+  "mode": "parallel",
+  "max": 20
+}

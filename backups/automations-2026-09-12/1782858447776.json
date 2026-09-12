@@ -1,0 +1,30 @@
+{
+  "id": "1782858447776",
+  "alias": "Spirou — Fin de nettoyage",
+  "description": "Notification quand Spirou a terminé et rejoint sa base",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "vacuum.spirou",
+      "to": "docked",
+      "from": "returning"
+    }
+  ],
+  "actions": [
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "Spirou",
+        "message": "🤖 Spirou a terminé le nettoyage et est rentré à sa base."
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "Spirou",
+        "message": "🤖 Spirou a terminé le nettoyage et est rentré à sa base."
+      }
+    }
+  ],
+  "mode": "single"
+}

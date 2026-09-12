@@ -1,0 +1,49 @@
+{
+  "id": "1785430137472",
+  "alias": "Vacances — Alerte désarmement manuel",
+  "description": "Pendant le mode vacances, prévient Nathan et Pauline dès que l'alarme est désarmée (arrivée d'un visiteur : belle-mère, femme de ménage…)",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": "disarmed",
+      "from": [
+        "armed_away",
+        "armed_night",
+        "armed_home",
+        "pending",
+        "triggered"
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "state": "on"
+    }
+  ],
+  "actions": [
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "🔓 Alarme désarmée",
+        "message": "Quelqu'un vient de désarmer l'alarme ({{ now().strftime('%H:%M') }}). Réarmement automatique 30 min après son départ.",
+        "data": {
+          "image": "/api/camera_proxy/camera.foscam_entree"
+        }
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "🔓 Alarme désarmée",
+        "message": "Quelqu'un vient de désarmer l'alarme ({{ now().strftime('%H:%M') }}). Réarmement automatique 30 min après son départ.",
+        "data": {
+          "image": "/api/camera_proxy/camera.foscam_entree"
+        }
+      }
+    }
+  ],
+  "mode": "single"
+}

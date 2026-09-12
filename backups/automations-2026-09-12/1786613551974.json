@@ -1,0 +1,32 @@
+{
+  "id": "1786613551974",
+  "alias": "Notifications — Relais Pixel 8 vers Samsung A34",
+  "description": "Le Pixel 8 de PAULINE est hors service ; elle utilise désormais le Samsung-A34. Les ~21 automatisations notifient encore `notify.mobile_app_pixel_8` : ce relais retransmet chacune de ces notifications à l'identique (titre, message, image) au Samsung. À supprimer le jour où les automatisations seront basculées sur le nouveau service, ou si Pauline récupère un Pixel. Nathan reçoit les siennes nativement via `notify.mobile_app_nixel_8`.",
+  "triggers": [
+    {
+      "event_data": {
+        "domain": "notify"
+      },
+      "event_type": "call_service",
+      "trigger": "event"
+    }
+  ],
+  "conditions": [
+    "{{ trigger.event.data.service == 'mobile_app_pixel_8' }}"
+  ],
+  "actions": [
+    {
+      "action": "notify.mobile_app_samsung_a34",
+      "data": {
+        "data": "{{ sd.data | default({}) }}",
+        "message": "{{ sd.message | default('(sans texte)') }}",
+        "title": "{{ sd.title | default('Home Assistant') }}"
+      }
+    }
+  ],
+  "max": 20,
+  "mode": "parallel",
+  "variables": {
+    "sd": "{{ trigger.event.data.service_data | default({}) }}"
+  }
+}

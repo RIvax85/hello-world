@@ -1,0 +1,41 @@
+{
+  "id": "1786614446344",
+  "alias": "Stores — Fin du déploiement chaleur",
+  "description": "Éteint le drapeau `stores_deployes_pour_chaleur` dès que les deux stores sont rentrés (par la pluie, le vent, la remontée de 17h ou le coucher du soleil), ce qui réactive le garde-fou anti-déploiement des vacances.",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": [
+        "cover.jardin_store_banne",
+        "cover.salle_a_manger_store_veranda"
+      ],
+      "to": "closed"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.stores_deployes_pour_chaleur",
+      "state": "on"
+    },
+    {
+      "condition": "state",
+      "entity_id": "cover.jardin_store_banne",
+      "state": "closed"
+    },
+    {
+      "condition": "state",
+      "entity_id": "cover.salle_a_manger_store_veranda",
+      "state": "closed"
+    }
+  ],
+  "actions": [
+    {
+      "action": "input_boolean.turn_off",
+      "target": {
+        "entity_id": "input_boolean.stores_deployes_pour_chaleur"
+      }
+    }
+  ],
+  "mode": "single"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "1782717239721",
+  "alias": "Alarme — TTS Armement en cours",
+  "description": "Annonce vocale pendant le délai de sortie (pending → armed)",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": "arming"
+    }
+  ],
+  "actions": [
+    {
+      "action": "tts.cloud_say",
+      "target": {
+        "entity_id": "media_player.paire_sejour"
+      },
+      "data": {
+        "message": "Alarme. Activation dans 30 secondes."
+      }
+    }
+  ],
+  "mode": "single"
+}

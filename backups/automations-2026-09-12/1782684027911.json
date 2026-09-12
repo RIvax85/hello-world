@@ -1,0 +1,56 @@
+{
+  "id": "1782684027911",
+  "alias": "Femme de ménage — Désarmement alarme",
+  "description": "Désarme l'alarme le mardi à 9h et notifie Nathan + Pauline. Inactif pendant le mode vacances, SAUF le 11 août 2026 (passage maintenu).",
+  "triggers": [
+    {
+      "trigger": "time",
+      "at": "09:00:00"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "time",
+      "weekday": [
+        "tue"
+      ]
+    },
+    {
+      "condition": "template",
+      "value_template": "{{ is_state('input_boolean.mode_vacances','off') or now().strftime('%Y-%m-%d') == '2026-08-11' }}"
+    },
+    {
+      "condition": "not",
+      "conditions": [
+        {
+          "condition": "state",
+          "entity_id": "alarm_control_panel.alarmo",
+          "state": "disarmed"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "alarm_control_panel.alarm_disarm",
+      "target": {
+        "entity_id": "alarm_control_panel.alarmo"
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "🧹 Femme de ménage",
+        "message": "Alarme désarmée pour le ménage. Réarmement automatique à 13h30."
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "🧹 Femme de ménage",
+        "message": "Alarme désarmée pour le ménage. Réarmement automatique à 13h30."
+      }
+    }
+  ],
+  "mode": "single"
+}

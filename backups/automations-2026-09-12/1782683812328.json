@@ -1,0 +1,36 @@
+{
+  "id": "1782683812328",
+  "alias": "Clim Salon — Arrêt si absence",
+  "description": "Éteint la clim salon 30 min après que tout le monde soit parti",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "zone.home",
+      "to": "0",
+      "for": {
+        "minutes": 30
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "not",
+      "conditions": [
+        {
+          "condition": "state",
+          "entity_id": "climate.salon_clim_salon_climate",
+          "state": "off"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "climate.turn_off",
+      "target": {
+        "entity_id": "climate.salon_clim_salon_climate"
+      }
+    }
+  ],
+  "mode": "single"
+}

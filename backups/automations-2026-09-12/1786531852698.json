@@ -1,0 +1,77 @@
+{
+  "id": "1786531852698",
+  "alias": "Alarme — Filtre faux positif véranda",
+  "description": "Le capteur de mouvement de la véranda (pièce vitrée, faux positifs soleil/chaleur) ne peut pas être exclu par service Alarmo. Ce filtre annule un déclenchement provoqué UNIQUEMENT par ce capteur, c'est-à-dire sans aucune ouverture de porte ou fenêtre dans les 10 minutes précédentes : il désarme, réarme aussitôt en Absence et prévient avec photo. Toute intrusion réelle passe forcément par un ouvrant — la sirène reste alors normale.",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": [
+        "pending",
+        "triggered"
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "state": "on"
+    },
+    {
+      "condition": "template",
+      "value_template": "{{ is_state('binary_sensor.capteur_mouvement_veranda_occupancy','on') or (now() - states.binary_sensor.capteur_mouvement_veranda_occupancy.last_changed).total_seconds() < 180 }}"
+    },
+    {
+      "condition": "template",
+      "value_template": "{% set ouvrants = ['binary_sensor.capteur_d_ouverture_porte_principale_contact','binary_sensor.capteur_d_ouverture_salon_contact','binary_sensor.capteur_d_ouverture_veranda_contact','binary_sensor.capteur_d_ouverture_fenetre_veranda_contact','binary_sensor.capteur_d_ouverture_fenetre_bureau_contact','binary_sensor.capteur_d_ouverture_porte_bureau_contact','binary_sensor.capteur_d_ouverture_escalier_contact','binary_sensor.capteur_porte_garage_contact','binary_sensor.0x00158d000689a40f_contact'] %}{% set ns = namespace(recent=false) %}{% for o in ouvrants %}{% if states[o] is not none %}{% if is_state(o,'on') or (now() - states[o].last_changed).total_seconds() < 600 %}{% set ns.recent = true %}{% endif %}{% endif %}{% endfor %}{{ not ns.recent }}"
+    }
+  ],
+  "actions": [
+    {
+      "action": "alarm_control_panel.alarm_disarm",
+      "target": {
+        "entity_id": "alarm_control_panel.alarmo"
+      }
+    },
+    {
+      "delay": {
+        "seconds": 5
+      }
+    },
+    {
+      "action": "alarmo.arm",
+      "data": {
+        "mode": "away",
+        "skip_delay": true,
+        "force": false,
+        "entity_id": "alarm_control_panel.alarmo"
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "⚠️ Faux positif véranda filtré",
+        "message": "Mouvement véranda sans aucune ouverture détectée — déclenchement annulé et alarme réarmée en Absence. Vérifiez la photo par acquit de conscience.",
+        "data": {
+          "image": "/api/camera_proxy/camera.foscam_veranda",
+          "priority": "high",
+          "ttl": 0
+        }
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "⚠️ Faux positif véranda filtré",
+        "message": "Mouvement véranda sans aucune ouverture détectée — déclenchement annulé et alarme réarmée en Absence. Vérifiez la photo par acquit de conscience.",
+        "data": {
+          "image": "/api/camera_proxy/camera.foscam_veranda",
+          "priority": "high",
+          "ttl": 0
+        }
+      }
+    }
+  ],
+  "mode": "single"
+}

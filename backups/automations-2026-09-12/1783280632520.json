@@ -1,0 +1,45 @@
+{
+  "id": "1783280632520",
+  "alias": "Bouton Gâche — Ouverture portillon",
+  "description": "Ouvre la gâche du portillon Dahua via appui long sur le bouton Hue",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "event.bouton_lit_june_bouton_1"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "event.bouton_lit_june_bouton_1",
+      "attribute": "event_type",
+      "state": "long_press"
+    }
+  ],
+  "actions": [
+    {
+      "action": "dahua.vto_open_door",
+      "target": {
+        "entity_id": "camera.portillon_main"
+      },
+      "data": {
+        "door_id": 1
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "🔓 Portillon",
+        "message": "Gâche ouverte via le bouton."
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "🔓 Portillon",
+        "message": "Gâche ouverte via le bouton."
+      }
+    }
+  ],
+  "mode": "single"
+}

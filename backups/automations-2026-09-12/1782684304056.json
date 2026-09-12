@@ -1,0 +1,131 @@
+{
+  "id": "1782684304056",
+  "alias": "Bouton Porte — Alarme",
+  "description": "Simple: désarmer ou armer nuit / Double: armer absence",
+  "triggers": [
+    {
+      "trigger": "mqtt",
+      "id": "press",
+      "options": {
+        "topic": "zigbee2mqtt/Bouton Porte",
+        "payload": "press",
+        "value_template": "{{ value_json.action }}"
+      }
+    },
+    {
+      "trigger": "mqtt",
+      "id": "hold",
+      "options": {
+        "topic": "zigbee2mqtt/Bouton Porte",
+        "payload": "hold",
+        "value_template": "{{ value_json.action }}"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "choose": [
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": [
+                "press"
+              ]
+            },
+            {
+              "condition": "not",
+              "conditions": [
+                {
+                  "condition": "state",
+                  "entity_id": "alarm_control_panel.alarmo",
+                  "state": "disarmed"
+                }
+              ]
+            }
+          ],
+          "sequence": [
+            {
+              "action": "alarm_control_panel.alarm_disarm",
+              "target": {
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            },
+            {
+              "action": "tts.cloud_say",
+              "data": {
+                "entity_id": "media_player.paire_sejour",
+                "message": "Alarme désactivée.",
+                "language": "fr-FR"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": [
+                "press"
+              ]
+            },
+            {
+              "condition": "state",
+              "entity_id": "alarm_control_panel.alarmo",
+              "state": "disarmed"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "alarmo.arm",
+              "data": {
+                "mode": "night",
+                "skip_delay": false,
+                "force": false,
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            },
+            {
+              "action": "tts.cloud_say",
+              "data": {
+                "entity_id": "media_player.paire_sejour",
+                "message": "Alarme activée. Mode nuit.",
+                "language": "fr-FR"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "trigger",
+              "id": [
+                "hold"
+              ]
+            }
+          ],
+          "sequence": [
+            {
+              "action": "alarmo.arm",
+              "data": {
+                "mode": "away",
+                "skip_delay": false,
+                "force": false,
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            },
+            {
+              "action": "tts.cloud_say",
+              "data": {
+                "entity_id": "media_player.paire_sejour",
+                "message": "Alarme activée. Mode absence.",
+                "language": "fr-FR"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mode": "single"
+}

@@ -1,0 +1,147 @@
+{
+  "id": "1782858456766",
+  "alias": "Capteurs — Alerte batterie faible",
+  "description": "Notification quand un capteur Zigbee passe sous 20%",
+  "triggers": [
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.bouton_porte_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.bouton_garage_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.0x00158d000689a40f_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_d_ouverture_escalier_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.0x5c0272fffe029f5e_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.0xc09b9efffeaae32d_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.0xc09b9efffead9977_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_d_ouverture_fenetre_bureau_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_d_ouverture_porte_bureau_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_d_ouverture_porte_principale_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_d_ouverture_salon_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_d_ouverture_veranda_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_inclinaison_porte_de_garage_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_mouvement_entree_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_mouvement_terrasse_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_mouvement_veranda_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_porte_garage_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_bureau_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_cave_a_vin_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_combles_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_june_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_malo_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_robin_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.capteur_temperature_salon_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.detecteur_de_fumee_rdc_battery",
+      "below": 20
+    },
+    {
+      "trigger": "numeric_state",
+      "entity_id": "sensor.sirene_battery",
+      "below": 20
+    }
+  ],
+  "actions": [
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "🔋 Batterie faible",
+        "message": "{{ trigger.to_state.name }} : {{ trigger.to_state.state }}%"
+      }
+    }
+  ],
+  "mode": "parallel"
+}

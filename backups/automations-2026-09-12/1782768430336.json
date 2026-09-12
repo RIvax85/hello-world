@@ -1,0 +1,66 @@
+{
+  "id": "1782768430336",
+  "alias": "Stores Vérandà + Banne — Remontée si pluie",
+  "description": "Remonte le store vérandà et le store banne automatiquement en cas de pluie détectée ou imminente",
+  "triggers": [
+    {
+      "entity_id": "weather.meteo_france_forecast_for_city_antony_ile_de_france_92_fr_antony",
+      "id": "pluie_meteo",
+      "to": [
+        "rainy",
+        "pouring",
+        "lightning-rainy"
+      ],
+      "trigger": "state"
+    },
+    {
+      "entity_id": "sensor.meteo_france_rain_for_city_antony_ile_de_france_92_fr_antony_next_rain",
+      "from": "unknown",
+      "id": "pluie_imminente",
+      "trigger": "state"
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "or",
+      "conditions": [
+        {
+          "condition": "state",
+          "entity_id": "cover.salle_a_manger_store_veranda",
+          "state": "open"
+        },
+        {
+          "condition": "state",
+          "entity_id": "cover.jardin_store_banne",
+          "state": "open"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "cover.close_cover",
+      "target": {
+        "entity_id": [
+          "cover.salle_a_manger_store_veranda",
+          "cover.jardin_store_banne"
+        ]
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "message": "🌧️ Pluie détectée — Stores vérandà et banne rentrés automatiquement.",
+        "title": "Stores"
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "message": "🌧️ Pluie détectée — Stores vérandà et banne rentrés automatiquement.",
+        "title": "Stores"
+      }
+    }
+  ],
+  "mode": "single"
+}

@@ -1,0 +1,101 @@
+{
+  "id": "1782463862105",
+  "alias": "Bouton Garage",
+  "description": "",
+  "triggers": [
+    {
+      "trigger": "mqtt",
+      "options": {
+        "topic": "zigbee2mqtt/Bouton Garage"
+      }
+    }
+  ],
+  "conditions": [
+    "{{ trigger.payload_json.action is defined and trigger.payload_json.action in ['single', 'double', 'hold'] }}"
+  ],
+  "actions": [
+    {
+      "variables": {
+        "action": "{{ trigger.payload_json.action }}"
+      }
+    },
+    {
+      "choose": [
+        {
+          "conditions": [
+            {
+              "condition": "template",
+              "value_template": "{{ action == 'single' and is_state('binary_sensor.capteur_porte_garage_contact','off') }}"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "script.garage_impulsion",
+              "metadata": {},
+              "data": {}
+            },
+            {
+              "action": "script.ouvrir_le_portail",
+              "metadata": {},
+              "data": {}
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "template",
+              "value_template": "{{ action == 'single' and is_state('binary_sensor.capteur_porte_garage_contact','on') }}"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "script.garage_impulsion",
+              "metadata": {},
+              "data": {}
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "template",
+              "value_template": "{{ action == 'double' }}"
+            }
+          ],
+          "sequence": [
+            {
+              "delay": {
+                "hours": 0,
+                "minutes": 0,
+                "seconds": 8,
+                "milliseconds": 0
+              }
+            },
+            {
+              "action": "script.garage_impulsion",
+              "metadata": {},
+              "data": {}
+            }
+          ]
+        },
+        {
+          "conditions": [
+            {
+              "condition": "template",
+              "value_template": "{{ action == 'hold' }}"
+            }
+          ],
+          "sequence": [
+            {
+              "action": "script.ouvrir_le_portail",
+              "metadata": {},
+              "data": {}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mode": "single"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "1782717280306",
+  "alias": "Alarme — TTS Désactivée",
+  "description": "Annonce vocale quand l'alarme est désarmée",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo",
+      "to": "disarmed",
+      "from": [
+        "armed_night",
+        "armed_away",
+        "armed_home",
+        "pending",
+        "triggered"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "action": "tts.cloud_say",
+      "target": {
+        "entity_id": "media_player.paire_sejour"
+      },
+      "data": {
+        "message": "Alarme désactivée."
+      }
+    }
+  ],
+  "mode": "single"
+}

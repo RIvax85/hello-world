@@ -1,0 +1,30 @@
+{
+  "id": "1784672419142",
+  "alias": "Alarmo → Clavier Frient (retour état)",
+  "description": "Publie l'état d'Alarmo vers le clavier frient pour mettre à jour ses LED (armé/désarmé/délai/alarme)",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": "alarm_control_panel.alarmo"
+    }
+  ],
+  "conditions": [
+    "{{ trigger.to_state.state not in ['unavailable','unknown'] }}"
+  ],
+  "actions": [
+    {
+      "variables": {
+        "mode": "{{ {'disarmed':'disarm','armed_away':'arm_all_zones','armed_night':'arm_night_zones','armed_home':'arm_day_zones','armed_custom_bypass':'arm_day_zones','arming':'exit_delay','pending':'entry_delay','triggered':'in_alarm'}.get(trigger.to_state.state, 'disarm') }}"
+      }
+    },
+    {
+      "action": "mqtt.publish",
+      "data": {
+        "topic": "zigbee2mqtt/Clavier Alarme/set",
+        "payload": "{{ {'arm_mode': {'mode': mode}} | to_json }}"
+      }
+    }
+  ],
+  "mode": "queued",
+  "max": 10
+}

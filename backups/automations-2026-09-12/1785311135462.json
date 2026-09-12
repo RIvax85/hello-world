@@ -1,0 +1,43 @@
+{
+  "id": "1785311135462",
+  "alias": "Alarme — Échec d'armement : annonce des ouvrants",
+  "description": "Quand Alarmo refuse de s'armer (ouvrant ouvert), notifie les téléphones et annonce à l'enceinte quel(s) équipement(s) bloque(nt)",
+  "triggers": [
+    {
+      "trigger": "event",
+      "event_type": "alarmo_failed_to_arm"
+    }
+  ],
+  "actions": [
+    {
+      "variables": {
+        "ouvrants": "{% set data = trigger.event.data %}{% set evs = data.sensors if (data.sensors is defined and data.sensors) else [] %}{% set os = state_attr('alarm_control_panel.alarmo','open_sensors') or {} %}{% set ids = evs if evs else os.keys() | list %}{% set ns = namespace(noms=[]) %}{% for s in ids %}{% set n = (state_attr(s,'friendly_name') or s) | replace(\"Capteur d'Ouverture \",\"\") | replace(\" Porte\",\"\") | replace(\" Contact\",\"\") %}{% set ns.noms = ns.noms + [n] %}{% endfor %}{{ ns.noms | join(', ') if ns.noms else 'capteur inconnu' }}"
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "⚠️ Alarme NON armée",
+        "message": "Armement refusé — ouvert : {{ ouvrants }}"
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "⚠️ Alarme NON armée",
+        "message": "Armement refusé — ouvert : {{ ouvrants }}"
+      }
+    },
+    {
+      "action": "tts.cloud_say",
+      "target": {
+        "entity_id": "media_player.paire_sejour"
+      },
+      "data": {
+        "message": "Attention. Impossible d'armer l'alarme. Vérifiez : {{ ouvrants }}."
+      }
+    }
+  ],
+  "mode": "queued",
+  "max": 3
+}

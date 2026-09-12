@@ -1,0 +1,80 @@
+{
+  "id": "1784672376394",
+  "alias": "Clavier Frient → Alarmo",
+  "description": "Valide PIN (avant le +) OU UID de badge RFID (après le +) contre les listes de confiance, puis arme/désarme Alarmo SANS code. PINs: 3577 (Nathan), 2402 (Pauline). Badges UID: B8DDE1F8, B8EB98F8, E80003F8, C804D5F8.",
+  "triggers": [
+    {
+      "trigger": "mqtt",
+      "topic": "zigbee2mqtt/Clavier Alarme"
+    }
+  ],
+  "conditions": [
+    "{{ trigger.payload_json.action in ['arm_all_zones','arm_day_zones','arm_night_zones','disarm'] }}",
+    "{{ (trigger.payload_json.action_code | string) in ['3577','2402'] or ((trigger.payload_json.action_code | string).split('+') | last) in ['B8DDE1F8','B8EB98F8','E80003F8','C804D5F8'] }}"
+  ],
+  "actions": [
+    {
+      "variables": {
+        "act": "{{ trigger.payload_json.action }}"
+      }
+    },
+    {
+      "choose": [
+        {
+          "conditions": [
+            "{{ act == 'disarm' }}"
+          ],
+          "sequence": [
+            {
+              "action": "alarm_control_panel.alarm_disarm",
+              "target": {
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            "{{ act == 'arm_all_zones' }}"
+          ],
+          "sequence": [
+            {
+              "action": "alarm_control_panel.alarm_arm_away",
+              "target": {
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            "{{ act == 'arm_night_zones' }}"
+          ],
+          "sequence": [
+            {
+              "action": "alarm_control_panel.alarm_arm_night",
+              "target": {
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            }
+          ]
+        },
+        {
+          "conditions": [
+            "{{ act == 'arm_day_zones' }}"
+          ],
+          "sequence": [
+            {
+              "action": "alarm_control_panel.alarm_arm_away",
+              "target": {
+                "entity_id": "alarm_control_panel.alarmo"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mode": "queued",
+  "max": 10
+}

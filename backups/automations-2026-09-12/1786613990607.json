@@ -1,0 +1,85 @@
+{
+  "id": "1786613990607",
+  "alias": "Vacances — Stores toujours rentrés",
+  "description": "Filet de sécurité : en mode vacances, rentre un store déployé par une source AUTOMATIQUE non légitime. Ne touche jamais à : (1) un déploiement décidé par un humain depuis l'app (context.user_id renseigné — Nathan ou Pauline), (2) un déploiement anti-chaleur (drapeau stores_deployes_pour_chaleur). 3 tentatives avec confirmation d'état pour absorber les coupures TaHoma.",
+  "triggers": [
+    {
+      "trigger": "state",
+      "entity_id": [
+        "cover.jardin_store_banne",
+        "cover.salle_a_manger_store_veranda"
+      ],
+      "to": "open",
+      "for": {
+        "seconds": 90
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.mode_vacances",
+      "state": "on"
+    },
+    {
+      "condition": "state",
+      "entity_id": "input_boolean.stores_deployes_pour_chaleur",
+      "state": "off"
+    },
+    {
+      "condition": "template",
+      "value_template": "{{ trigger.to_state.context.user_id is none }}"
+    }
+  ],
+  "actions": [
+    {
+      "repeat": {
+        "count": 3,
+        "sequence": [
+          {
+            "action": "cover.close_cover",
+            "target": {
+              "entity_id": "{{ trigger.entity_id }}"
+            }
+          },
+          {
+            "wait_template": "{{ is_state(trigger.entity_id, 'closed') }}",
+            "timeout": {
+              "seconds": 90
+            },
+            "continue_on_timeout": true
+          },
+          {
+            "if": [
+              {
+                "condition": "template",
+                "value_template": "{{ is_state(trigger.entity_id, 'closed') }}"
+              }
+            ],
+            "then": [
+              {
+                "stop": "Store rentré"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "action": "notify.mobile_app_pixel_8",
+      "data": {
+        "title": "⚠️ Store non rentré",
+        "message": "{{ state_attr(trigger.entity_id,'friendly_name') }} : 3 tentatives de rentrée ont échoué (état {{ states(trigger.entity_id) }}, position {{ state_attr(trigger.entity_id,'current_position') }}). Vérification manuelle nécessaire."
+      }
+    },
+    {
+      "action": "notify.mobile_app_nixel_8",
+      "data": {
+        "title": "⚠️ Store non rentré",
+        "message": "{{ state_attr(trigger.entity_id,'friendly_name') }} : 3 tentatives de rentrée ont échoué (état {{ states(trigger.entity_id) }}, position {{ state_attr(trigger.entity_id,'current_position') }}). Vérification manuelle nécessaire."
+      }
+    }
+  ],
+  "mode": "parallel",
+  "max": 4
+}
