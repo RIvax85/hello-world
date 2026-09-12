@@ -370,3 +370,73 @@ Chantier propre à la rentrée : remplacer `notify.mobile_app_pixel_8` par
 `notify.mobile_app_samsung_a34` dans les automatisations et supprimer le
 relais — idéalement en passant par le script central `notifier` déjà
 prévu dans la liste ci-dessous.
+
+## 2026-09-12 — Vérification arrosage + inventaire des mises à jour
+
+### Arrosage : la routine fonctionne, mais Nathan n'en voyait rien
+
+Les deux automatisations sont actives et se sont déclenchées ce matin
+(06h00 et 06h30) ; elles ont sauté leur exécution car le 12/09 est un
+jour « impair » — comportement normal, l'arrosage est programmé un jour
+sur deux.
+
+Dernier arrosage réel confirmé par l'état des vannes :
+- `switch.arrosage_automatique_valve_1` (potager) : `last_changed`
+  11/09 06h55 locale → arrosé le 11/09 de 06h30 à 06h55 (25 min).
+- `switch.arrosage_automatique_valve_2` (massifs) : `last_changed`
+  11/09 06h20 locale → arrosé le 11/09 de 06h00 à 06h20 (20 min).
+- Arrosage supplémentaire du potager le 06/09 (jour impair mais
+  T°max > 30 °C, la clause canicule a joué).
+
+**Cause de l'impression « ça n'a pas marché » : les deux automatisations
+ne notifiaient que `notify.mobile_app_pixel_8`**, c'est-à-dire le Pixel
+cassé de Pauline (relayé vers son Samsung). Nathan n'a donc jamais reçu
+les confirmations d'arrosage. Corrigé : ajout de
+`notify.mobile_app_nixel_8` dans les deux automatisations (sauvegardes
+dans `backups/automation-1784990097733-avant-2026-09-12.json` et
+`backups/automation-1784990109169-avant-2026-09-12.json`).
+
+⚠️ Rappel : ~21 automatisations notifient encore `mobile_app_pixel_8`.
+Le chantier `notifier` centralisé reste la vraie solution.
+
+### Anomalie d'historique à surveiller
+
+Le recorder fonctionne (158 changements du capteur mouvement salon
+enregistrés sur 24 h), mais le logbook présente des trous : la requête
+sur `switch.arrosage_automatique_valve_1` sur 168 h ne renvoie que les
+événements du 06/09, alors que l'état de l'entité prouve un changement
+le 11/09 à 04h55 UTC. Même symptôme sur les entités `automation.*`
+(`volets_r_1_fermeture_5h`, qui tourne tous les jours, n'a qu'une seule
+entrée en 7 jours). À investiguer à tête reposée : purge du recorder,
+exclusions dans `configuration.yaml`, ou base corrompue.
+
+### Autres points relevés
+
+- `sensor.arrosage_automatique_battery` = 79 % mais **plus aucune
+  remontée depuis le 06/08** (37 jours). À surveiller : pile du boîtier
+  GIEX ou remontée Zigbee défaillante.
+- **123 entités indisponibles**, dont 51 scènes, 25 boutons et 9 `cover`
+  (probablement les reliquats VELUX/KLF200 jamais nettoyés). Ménage
+  toujours en attente.
+
+### Mises à jour en attente (13)
+
+| Composant | Actuel | Disponible |
+|---|---|---|
+| Home Assistant Core | 2026.7.4 | 2026.9.2 |
+| Home Assistant OS | 18.1 | 18.2 |
+| Zigbee2MQTT | 2.12.1-1 | 2.14.1-1 |
+| Mosquitto broker | 7.1.0 | 7.1.1 |
+| File editor | 6.0.0 | 6.1.0 |
+| Home Assistant MCP Server | 7.14.2 | 8.4.3 |
+| Linky | 1.7.0 | 1.8.0 |
+| Dahua | 0.9.83 | 0.9.93 |
+| MELCloud Home | v2.3.5 | v2.5.0 |
+| Alarmo | v1.10.18 | v1.10.19 |
+| Rika Firenet | v2.29.38 | v2.29.40 |
+| Thermostat 0xc09b9efffeaae32d | 4864 | 5124 |
+| Bouton Porte | 33566472 | 33576193 |
+
+Ordre conseillé : sauvegarde complète → add-ons (Mosquitto, Z2M, File
+editor) → intégrations HACS → HA Core → HA OS → firmwares Zigbee en
+dernier (risque de brique, à faire quand on est sur place).
