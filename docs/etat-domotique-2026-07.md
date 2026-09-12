@@ -277,31 +277,80 @@ Température Combles.
 Vigilance Météo-France au 13/08 : **Orange = Canicule** (vent violent et
 orages au vert), d'où le maintien des stores déployés.
 
-## Reste à faire (rentrée septembre 2026)
+## Reste à faire — révisé le 2026-09-13
 
-1. **Volets VELUX** (3 combles, 2 toit R+1, dépendance : 2 volets +
-   2 fenêtres) : encore porteurs de l'ancienne clé KLF → reset moteur
-   physique (bouton P ~10 s) puis appairage TaHoma. Appeler avant :
-   support Somfy 0 820 055 055 (manipulations « clé perdue ») et VELUX.
-   Prévenir le locataire pour la dépendance.
-2. **3 récepteurs lumière muets** : PROG du récepteur ~2 s puis PROG bref
-   Situo canal 2, puis découverte TaHoma.
-3. **Ménage HA** : supprimer l'intégration Velux et les entités orphelines
-   (`cover.combles_*`, `cover.dependance_*`, `cover.store_banne`,
-   `cover.rdc_store_veranda`, `light.store_banne_*`, et statuer sur
-   `cover.store_banne_2` / `cover.store_veranda`).
-4. Optionnel : API locale Overkiz (mode développeur Somfy + jeton) ;
-   vérifier l'appairage du capteur vent Eolis du banne ; ajouter les volets
-   de toit aux automatisations une fois appairés.
-5. Ressusciter « Détecteur de fumée Palier » (pile / ré-appairage Zigbee) —
-   point de sécurité incendie.
-6. Mise à jour firmware du Shelly portail (reportée volontairement avant
-   le départ).
-7. Sirène : régler proprement la durée par défaut du warning côté
-   Zigbee2MQTT (l'automatisation-relance devient alors une redondance).
-8. Script central `notifier` : fan-out vers les 2 téléphones + trace
-   `logbook.log` pour un historique des notifications consultable dans HA,
-   puis migration progressive des automatisations.
+### A. Sécurité, en premier
+
+1. **Détecteur de fumée Palier** — toujours en `unknown`, aucune donnée
+   depuis fin juillet. Pile ou ré-appairage Zigbee. L'étage n'a pas de
+   détection incendie remontée. (Le détecteur RDC fonctionne : `off`.)
+
+### B. Le gros chantier : reprogrammer les 9 produits VELUX solaires
+
+Tous portent encore l'ancienne clé io du KLF200, aucune box ne peut donc
+les adopter. Inventaire : **3 volets combles** (Escalier, Lit, SdB),
+**2 volets de toit R+1**, **dépendance** (2 volets + 2 fenêtres).
+
+Procédure par produit : reset moteur physique (bouton P ~10 s, le volet
+fait un va-et-vient) puis appairage TaHoma via le parcours « io 1-way ».
+
+Prérequis et précautions :
+- **Journée ensoleillée** — batteries solaires chargées, sinon l'échange
+  de clés échoue (c'est ce qui nous avait bloqués en juillet).
+- Accès physique aux moteurs ; **prévenir le locataire** pour la dépendance.
+- Appeler avant : **support Somfy 0 820 055 055** (manipulations
+  « clé perdue ») et VELUX — ils ont des procédures assistées.
+- Le reset efface aussi l'appairage des KLI 313 : prévoir de les
+  ré-appairer produit par produit.
+
+Après appairage, côté HA : renommer les entités, les remettre sur le
+dashboard (section Volets), et les rebrancher dans
+`script.volets_r1_fermer`, l'anti-chaleur et `script.bonne_nuit`.
+
+### C. Restes matériels
+
+- **3 récepteurs de lumière du store banne** jamais récupérés — seul
+  `light.jardin_lumiere_banne_1` existe et fonctionne. Procédure : PROG du
+  récepteur ~2 s, puis PROG bref Situo canal 2, puis découverte TaHoma.
+- **2 firmwares Zigbee**, à flasher en présence de quelqu'un : thermostat
+  `0xc09b9efffeaae32d` (4864 → 5124) et **Bouton Porte**
+  (33566472 → 33576193, il commande l'alarme).
+- **Capteur vent Eolis** du store banne : vérifier qu'il est bien appairé
+  depuis la remise à zéro des moteurs de juillet — sécurité importante.
+- **Pile GIEX arrosage** : 79 % affichés mais plus aucune remontée entre
+  le 06/08 et le redémarrage du 12/09. À revérifier dans quelques jours.
+- `light.veranda_lampadaire_veranda` (Hue) injoignable.
+
+### D. Configuration
+
+- **Femme de ménage** : avancer le désarmement du mardi de 9h00 à **8h15**
+  — le 11/08 elle est arrivée à 8h31 et a déclenché l'alarme.
+- **Sirène** : régler la durée par défaut du `warning` côté Zigbee2MQTT ;
+  `automation.alarme_sirene_continue_pendant_le_declenchement` deviendra
+  alors une simple redondance.
+- **Anomalie du recorder** (trous dans le logbook) : à revérifier
+  maintenant que Core est en 2026.9.2, la mise à jour l'a peut-être réglée.
+- **Trois entrées Overkiz** dont une `not_loaded`
+  (`Passerelle : 2047-0740-8349`, entry_id `01KW0CQHGPV7C7BRYEDW1MHR35`) —
+  probable reliquat d'une tentative d'API locale.
+- Optionnel : passer Overkiz en **API locale** (mode développeur Somfy +
+  jeton) pour ne plus dépendre du cloud.
+
+### E. Infrastructure (chantiers de Nathan)
+
+- **Déménagement dans la baie de brassage.** Points de vigilance : le
+  dongle Zigbee et le RFPlayer sont des équipements radio — les enfermer
+  dans une baie métallique dégrade fortement la portée. Prévoir des
+  rallonges USB déportées pour sortir les antennes de la baie, et
+  **re-tester tout le maillage Zigbee après le déménagement** (capteurs
+  d'ouverture, détecteurs de fumée, sirène, clavier d'alarme). Idem pour
+  la TaHoma, qui doit garder une bonne liaison io vers les volets et
+  stores.
+- **Extinction de Jeedom.** À faire seulement après un inventaire de ce
+  qui en dépend encore : Jeedom n'apparaît nulle part dans HA, mais il
+  peut piloter des équipements en direct. Lister ses scénarios et ses
+  périphériques avant de couper, et vérifier qu'aucun n'est orphelin
+  côté HA.
 
 ## 2026-08-23 — Alarme qui s'arme alors que la maison est occupée
 
