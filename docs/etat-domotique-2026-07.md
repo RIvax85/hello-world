@@ -568,3 +568,78 @@ et une `Passerelle : 2047-0740-8349` en `not_loaded`
 (entry_id `01KW0CQHGPV7C7BRYEDW1MHR35`). Probable reliquat d'une tentative
 d'API locale. Non touché ce soir, faute de pouvoir vérifier quelles
 entités dépendent de quelle entrée sans risque.
+
+## 2026-09-12 (nuit) — Campagne de mises à jour
+
+Sauvegarde préalable : `Avant_MaJ_2026-09-12` (backup_id `5e3ca662`,
+27 Mo, sans base de données) — plus la sauvegarde automatique du matin
+même et celle créée par HA avant la mise à jour de Core.
+
+### Installé
+
+| Composant | Avant | Après |
+|---|---|---|
+| File editor (add-on) | 6.0.0 | 6.1.0 |
+| Mosquitto broker (add-on) | 7.1.0 | 7.1.1 |
+| Zigbee2MQTT (add-on) | 2.12.1-1 | 2.14.1-1 |
+| Home Assistant MCP Server (add-on) | 7.14.2 | 8.4.3 |
+| Linky (HACS) | 1.7.0 | 1.8.0 |
+| Dahua (HACS) | 0.9.83 | 0.9.93 |
+| MELCloud Home (HACS) | v2.3.5 | v2.5.0 |
+| Alarmo (HACS) | v1.10.18 | v1.10.19 |
+| Rika Firenet (HACS) | v2.29.38 | v2.29.40 |
+
+Contrôles après chaque étape : aucune entité Zigbee perdue après le
+redémarrage de Mosquitto ni celui de Zigbee2MQTT, alarme restée
+`armed_night` de bout en bout.
+
+Effet de bord positif : les entités `jardin_lumiere_banne_1` (lumière du
+store banne + ses boutons), injoignables depuis des semaines, sont
+revenues avec la mise à jour d'Overkiz — entités `unavailable` passées
+de 7 à 3.
+
+### Volontairement reporté
+
+Les deux firmwares Zigbee — thermostat `0xc09b9efffeaae32d`
+(4864 → 5124) et **Bouton Porte** (33566472 → 33576193) — ne doivent
+être flashés qu'en présence de quelqu'un sur place : un flash interrompu
+brique le module, et le Bouton Porte pilote l'armement de l'alarme.
+
+### Notes d'exploitation
+
+Les appels `update/install` sont longs (téléchargement GitHub pour HACS,
+image conteneur pour Core). L'outil MCP `ha_call_service` expire avant la
+fin : passer par `curl` avec `--max-time` élevé et sonder l'état de
+l'entité `update.*` ensuite. L'installation se poursuit côté serveur même
+après l'expiration côté client.
+
+### Core et OS
+
+| Composant | Avant | Après |
+|---|---|---|
+| Home Assistant Core | 2026.7.4 | **2026.9.2** |
+| Home Assistant OS | 18.1 | **18.2** |
+
+Core : sauvegarde automatique préalable, téléchargement, redémarrage —
+HA injoignable environ 45 s. Au retour, les entités MQTT/Zigbee sont
+passées brièvement en `unknown` le temps que Zigbee2MQTT republie les
+états retenus, puis tout est revenu (contrôlé sur la porte principale et
+la porte de garage).
+
+OS : redémarrage complet de la machine, revenu en 18.2.
+
+### État final vérifié (13/09 vers 23h10)
+
+- Core 2026.9.2, OS 18.2
+- 729 entités, **3 seulement `unavailable`** : lampe Hue véranda,
+  Freebox Player (en veille, normal), sélecteur de parcours du robot
+- 41 automatisations actives sur 43 — les 2 inactives sont bien le relais
+  de notifications et l'archive, désactivés volontairement
+- Alarme `armed_night` **pendant toute l'opération**, jamais interrompue
+- Capteurs d'ouverture porte principale et garage opérationnels
+
+### Reste en attente
+
+Uniquement les deux firmwares Zigbee, à flasher en présence de quelqu'un :
+thermostat `0xc09b9efffeaae32d` (4864 → 5124) et **Bouton Porte**
+(33566472 → 33576193).
